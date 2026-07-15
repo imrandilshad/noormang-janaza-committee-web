@@ -27,22 +27,6 @@ export function LoginPage() {
   const [error, setError] = useState('')
   const [session, setSession] = useState<Session | null | undefined>(undefined)
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => setSession(data.session))
-  }, [])
-
-  if (session === undefined) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-background">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-      </div>
-    )
-  }
-
-  if (session) {
-    return <Navigate to="/admin" replace />
-  }
-
   const {
     register,
     handleSubmit,
@@ -50,6 +34,10 @@ export function LoginPage() {
   } = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
   })
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => setSession(data.session))
+  }, [])
 
   const onSubmit = async (data: LoginForm) => {
     setError('')
@@ -62,6 +50,18 @@ export function LoginPage() {
     } else {
       navigate('/admin')
     }
+  }
+
+  if (session === undefined) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-background">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+      </div>
+    )
+  }
+
+  if (session) {
+    return <Navigate to="/admin" replace />
   }
 
   return (
