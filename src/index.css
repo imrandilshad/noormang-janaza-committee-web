@@ -1,0 +1,177 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 48%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    margin: 0;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  #root {
+    min-height: 100svh;
+  }
+}
+
+/* ─── RTL / Urdu support ─────────────────────────────────────── */
+
+/* Urdu base: Nastaliq font + right-align */
+[dir="rtl"] {
+  font-family: 'Noto Nastaliq Urdu', 'Segoe UI', system-ui, sans-serif;
+  text-align: right;
+}
+
+/* Nastaliq script needs generous line-height; boost heading sizes slightly */
+[dir="rtl"] p,
+[dir="rtl"] span,
+[dir="rtl"] li,
+[dir="rtl"] td,
+[dir="rtl"] th,
+[dir="rtl"] label,
+[dir="rtl"] button,
+[dir="rtl"] a {
+  line-height: 2;
+}
+
+[dir="rtl"] h1 { font-size: 1.1em; line-height: 2; }
+[dir="rtl"] h2 { font-size: 1.08em; line-height: 2; }
+[dir="rtl"] h3,
+[dir="rtl"] h4 { font-size: 1.05em; line-height: 2; }
+
+/* Form controls: ensure RTL text direction */
+[dir="rtl"] input:not([type="checkbox"]):not([type="radio"]),
+[dir="rtl"] textarea,
+[dir="rtl"] select {
+  text-align: right;
+  direction: rtl;
+}
+
+/* Number and date inputs stay LTR even in RTL layout */
+[dir="rtl"] input[type="number"],
+[dir="rtl"] input[type="date"],
+[dir="rtl"] input[type="email"],
+[dir="rtl"] input[type="tel"] {
+  direction: ltr;
+  text-align: left;
+}
+
+/* Flip search-icon wrapper: use .si-wrap on the relative div */
+[dir="rtl"] .si-wrap > .si-icon {
+  left: auto;
+  right: 0.75rem;
+}
+[dir="rtl"] .si-wrap > input {
+  padding-left: 0.75rem;
+  padding-right: 2.25rem;
+}
+
+/* Badge / inline chips: keep RTL text */
+[dir="rtl"] .badge,
+[dir="rtl"] [class*="Badge"] {
+  direction: rtl;
+}
+
+/* ── Flip icon-before-text margin pattern in RTL ─────────────────
+   Pattern: <Icon className="mr-2 h-4 w-4" /> — in RTL flex-row
+   the icon sits on the right, so the gap must move to its left.   */
+[dir="rtl"] button svg.mr-2,
+[dir="rtl"] a svg.mr-2,
+[dir="rtl"] [role="menuitem"] svg.mr-2 {
+  margin-right: 0 !important;
+  margin-left: 0.5rem;
+}
+[dir="rtl"] button svg.ml-2,
+[dir="rtl"] a svg.ml-2,
+[dir="rtl"] [role="menuitem"] svg.ml-2 {
+  margin-left: 0 !important;
+  margin-right: 0.5rem;
+}
+
+/* Table: cells follow RTL by default; action columns stay at end */
+[dir="rtl"] th,
+[dir="rtl"] td {
+  text-align: right;
+}
+[dir="rtl"] th.text-right,
+[dir="rtl"] td.text-right {
+  text-align: left;
+}
+[dir="rtl"] td .flex.justify-end,
+[dir="rtl"] th .flex.justify-end {
+  justify-content: flex-start;
+}
+
+/* ─── Custom scrollbar (theme-aware via CSS variables) ──────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 100px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.4);
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--border)) transparent;
+}
