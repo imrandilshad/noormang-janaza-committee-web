@@ -30,7 +30,7 @@ export function PublicMembersPage() {
         .from('members')
         .select('id, member_number, full_name, father_name, occupation, status, joined_date, families(family_name)')
         .order('member_number', { ascending: true })
-      return (data ?? []) as Member[]
+      return (data ?? []) as unknown as Member[]
     },
   })
 
