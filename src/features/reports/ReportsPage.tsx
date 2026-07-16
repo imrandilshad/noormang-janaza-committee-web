@@ -3,10 +3,11 @@ import { useTranslation } from 'react-i18next'
 import { useQuery } from '@tanstack/react-query'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { supabase } from '@/lib/supabase'
+import { TableSkeleton, ReportsSkeleton } from '@/components/shared/Skeletons'
 import { formatCurrency, formatDate } from '@/lib/utils'
 
 const COLORS = ['#3b82f6', '#ef4444', '#f59e0b', '#10b981']
@@ -43,10 +44,12 @@ export function ReportsPage() {
   const totalExpenses = expenseData.reduce((s, e) => s + e.amount, 0)
   const totalCollected = collectionData.reduce((s, c) => s + c.amount_paid, 0)
 
-  const byCategory = ['transportation', 'food', 'shroud', 'miscellaneous'].map((cat) => ({
-    name: t(`expense.${cat}`),
-    value: expenseData.filter((e) => e.category === cat).reduce((s, e) => s + e.amount, 0),
-  }))
+  const byCategory = ['transportation', 'food', 'shroud', 'miscellaneous']
+    .map((cat) => ({
+      name: t(`expense.${cat}`),
+      value: expenseData.filter((e) => e.category === cat).reduce((s, e) => s + e.amount, 0),
+    }))
+    .filter((item) => item.value > 0)
 
   return (
     <div className="space-y-6">
@@ -70,6 +73,11 @@ export function ReportsPage() {
         </CardContent>
       </Card>
 
+      {/* Summary + Charts — skeleton while data loads */}
+      {expLoading ? (
+        <ReportsSkeleton />
+      ) : (
+        <>
       {/* Summary */}
       <div className="grid grid-cols-3 gap-4">
         <Card>
@@ -91,12 +99,25 @@ export function ReportsPage() {
         <Card>
           <CardHeader><CardTitle>Expenses by Category</CardTitle></CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={280}>
+            <ResponsiveContainer width="100%" height={300}>
               <PieChart>
-                <Pie data={byCategory} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} label={({ name, value }) => `${name}: ${formatCurrency(value)}`}>
+                <Pie
+                  data={byCategory}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="45%"
+                  outerRadius={90}
+                  innerRadius={40}
+                >
                   {byCategory.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
                 </Pie>
                 <Tooltip formatter={(v) => formatCurrency(Number(v))} />
+                <Legend
+                  formatter={(value, entry) => (
+                    <span className="text-xs">{value}: {formatCurrency((entry.payload as { value: number }).value)}</span>
+                  )}
+                />
               </PieChart>
             </ResponsiveContainer>
           </CardContent>
@@ -122,13 +143,15 @@ export function ReportsPage() {
           </CardContent>
         </Card>
       </div>
+        </>
+      )}
 
       {/* Expense Details Table */}
       <Card>
         <CardHeader><CardTitle>Expense Details</CardTitle></CardHeader>
         <CardContent>
           {expLoading ? (
-            <div className="text-center py-4 text-muted-foreground">{t('common.loading')}</div>
+            <TableSkeleton rows={6} cols={4} />
           ) : (
             <Table>
               <TableHeader>

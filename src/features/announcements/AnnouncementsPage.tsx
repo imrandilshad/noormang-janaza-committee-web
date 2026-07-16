@@ -14,6 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { supabase } from '@/lib/supabase'
+import { AnnouncementCardSkeleton } from '@/components/shared/Skeletons'
 import { formatDate } from '@/lib/utils'
 import type { Announcement } from '@/types/database'
 
@@ -86,7 +87,7 @@ export function AnnouncementsPage() {
       </div>
 
       {isLoading ? (
-        <div className="text-center py-8 text-muted-foreground">{t('common.loading')}</div>
+        <AnnouncementCardSkeleton count={4} showActions />
       ) : (
         <div className="space-y-3">
           {announcements.length === 0 ? (

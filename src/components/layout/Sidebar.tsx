@@ -1,5 +1,5 @@
-import { NavLink, Link } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
+import { NavLink, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   LayoutDashboard,
   Users,
@@ -14,29 +14,33 @@ import {
   FolderOpen,
   Globe,
   X,
-} from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
-import { Separator } from '@/components/ui/separator'
-import { useAppStore } from '@/store/useAppStore'
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { useAppStore } from "@/store/useAppStore";
 
 const navItems = [
-  { to: '/admin',               icon: LayoutDashboard, labelKey: 'menu.dashboard' },
-  { to: '/admin/families',      icon: Home,            labelKey: 'menu.families' },
-  { to: '/admin/members',       icon: Users,           labelKey: 'menu.members' },
-  { to: '/admin/funeral-cases', icon: BookOpen,        labelKey: 'menu.funeralCases' },
-  { to: '/admin/expenses',      icon: Receipt,         labelKey: 'menu.expenses' },
-  { to: '/admin/collections',   icon: HandCoins,       labelKey: 'menu.collections' },
-  { to: '/admin/payments',      icon: Wallet,          labelKey: 'menu.payments' },
-  { to: '/admin/announcements', icon: Megaphone,       labelKey: 'menu.announcements' },
-  { to: '/admin/reports',       icon: BarChart2,       labelKey: 'menu.reports' },
-  { to: '/admin/documents',     icon: FolderOpen,      labelKey: 'menu.documents' },
-]
+  { to: "/admin", icon: LayoutDashboard, labelKey: "menu.dashboard" },
+  { to: "/admin/families", icon: Home, labelKey: "menu.families" },
+  { to: "/admin/members", icon: Users, labelKey: "menu.members" },
+  { to: "/admin/funeral-cases", icon: BookOpen, labelKey: "menu.funeralCases" },
+  { to: "/admin/expenses", icon: Receipt, labelKey: "menu.expenses" },
+  { to: "/admin/collections", icon: HandCoins, labelKey: "menu.collections" },
+  { to: "/admin/payments", icon: Wallet, labelKey: "menu.payments" },
+  {
+    to: "/admin/announcements",
+    icon: Megaphone,
+    labelKey: "menu.announcements",
+  },
+  { to: "/admin/reports", icon: BarChart2, labelKey: "menu.reports" },
+  { to: "/admin/documents", icon: FolderOpen, labelKey: "menu.documents" },
+];
 
 export function Sidebar() {
-  const { t } = useTranslation()
-  const { sidebarOpen, setSidebarOpen, language } = useAppStore()
-  const isRTL = language === 'ur'
+  const { t } = useTranslation();
+  const { sidebarOpen, setSidebarOpen, language } = useAppStore();
+  const isRTL = language === "ur";
 
   return (
     <>
@@ -51,9 +55,13 @@ export function Sidebar() {
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed top-0 z-30 h-full w-64 bg-card transition-transform duration-300 lg:translate-x-0 lg:static lg:z-auto',
-          isRTL ? 'right-0 border-l' : 'left-0 border-r',
-          sidebarOpen ? 'translate-x-0' : (isRTL ? 'translate-x-full' : '-translate-x-full'),
+          "fixed top-0 z-30 h-full w-64 bg-card transition-transform duration-300 lg:translate-x-0 lg:static lg:z-auto",
+          isRTL ? "right-0 border-l" : "left-0 border-r",
+          sidebarOpen
+            ? "translate-x-0"
+            : isRTL
+              ? "translate-x-full"
+              : "-translate-x-full",
         )}
       >
         {/* Logo */}
@@ -64,7 +72,7 @@ export function Sidebar() {
             </div>
             <div>
               <p className="text-sm font-bold leading-none">Janaza Committee</p>
-              <p className="text-xs text-muted-foreground">Noormang Village</p>
+              <p className="text-xs text-muted-foreground">Village Noormang</p>
             </div>
           </div>
           <Button
@@ -85,17 +93,17 @@ export function Sidebar() {
             <NavLink
               key={to}
               to={to}
-              end={to === '/admin'}
+              end={to === "/admin"}
               className={({ isActive }) =>
                 cn(
-                  'flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors',
+                  "flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors",
                   isActive
-                    ? 'bg-primary text-primary-foreground'
-                    : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
                 )
               }
               onClick={() => {
-                if (window.innerWidth < 1024) setSidebarOpen(false)
+                if (window.innerWidth < 1024) setSidebarOpen(false);
               }}
             >
               <Icon className="h-4 w-4 shrink-0" />
@@ -110,14 +118,14 @@ export function Sidebar() {
             to="/"
             className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
             onClick={() => {
-              if (window.innerWidth < 1024) setSidebarOpen(false)
+              if (window.innerWidth < 1024) setSidebarOpen(false);
             }}
           >
             <Globe className="h-4 w-4 shrink-0" />
-            {t('menu.viewWebsite')}
+            {t("menu.viewWebsite")}
           </Link>
         </nav>
       </aside>
     </>
-  )
+  );
 }

@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { ScrollToTop } from '@/components/shared/ScrollToTop'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AppLayout } from '@/layouts/AppLayout'
 import { AuthGuard } from '@/features/auth/AuthGuard'
@@ -32,6 +33,7 @@ export function AppRouter() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           {/* Public website */}
           <Route element={<PublicLayout />}>

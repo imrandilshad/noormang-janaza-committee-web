@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
-import { useNavigate, Navigate } from 'react-router-dom'
+import { useNavigate, Navigate, Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useTranslation } from 'react-i18next'
-import { Heart, Loader2 } from 'lucide-react'
+import { Heart, Loader2, Globe } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -114,6 +114,16 @@ export function LoginPage() {
               {t('auth.login')}
             </Button>
           </form>
+
+          <div className="mt-6 text-center">
+            <Link
+              to="/"
+              className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors"
+            >
+              <Globe className="h-3.5 w-3.5" />
+              Visit Public Website
+            </Link>
+          </div>
         </CardContent>
       </Card>
     </div>

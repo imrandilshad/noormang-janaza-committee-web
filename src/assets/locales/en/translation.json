@@ -51,7 +51,7 @@
     "recentActivities": "Recent Activities",
     "pendingCollections": "Pending Collections",
     "openCases": "Open Cases",
-    "welcome": "Welcome to Janaza Committee Portal"
+    "welcome": "Welcome to Noormang Mutual Committee Portal"
   },
   "member": {
     "memberId": "Member ID",
@@ -167,7 +167,7 @@
     "email": "Email",
     "password": "Password",
     "administrator": "Administrator",
-    "loginTitle": "Janaza Committee Portal",
+    "loginTitle": "Noormang Mutual Committee",
     "loginSubtitle": "Sign in to your account",
     "invalidCredentials": "Invalid email or password",
     "forgotPassword": "Forgot Password?"
@@ -188,7 +188,7 @@
     "announcements": "Announcements",
     "funeralCases": "Funeral Cases",
     "members": "Member Directory",
-    "heroTitle": "Noormang Janaza Committee",
+    "heroTitle": "Noormang Mutual Committee",
     "heroSubtitle": "Serving our community with compassion and care since 2018",
     "statsTitle": "Our Community",
     "recentAnnouncements": "Recent Announcements",
@@ -203,8 +203,11 @@
     "filterGeneral": "General",
     "searchMembers": "Search members...",
     "memberDirectory": "Member Directory",
-    "footerText": "Janaza Committee — Noormang Village",
+    "footerText": "Noormang Mutual Committee",
     "footerRights": "All rights reserved",
+    "footerDescription": "A community initiative providing mutual support for funeral arrangements in Village Noormang since 2018.",
+    "quickLinks": "Quick Links",
+    "management": "Admin Portal",
     "totalMembers": "Total Members",
     "totalFamilies": "Total Families",
     "casesHandled": "Cases Handled",

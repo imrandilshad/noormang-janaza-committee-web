@@ -14,6 +14,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { supabase } from '@/lib/supabase'
+import { TableSkeleton } from '@/components/shared/Skeletons'
 import type { Member } from '@/types/database'
 
 const memberSchema = z.object({
@@ -69,7 +70,7 @@ export function MembersPage() {
 
   const upsert = useMutation({
     mutationFn: async (values: MemberForm) => {
-      const payload = { ...values, family_id: values.family_id || null }
+      const payload = { ...values, family_id: (values.family_id && values.family_id !== '_none') ? values.family_id : null }
       if (editing) {
         await supabase.from('members').update(payload).eq('id', editing.id)
       } else {
@@ -152,7 +153,7 @@ export function MembersPage() {
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <div className="text-center py-8 text-muted-foreground">{t('common.loading')}</div>
+            <TableSkeleton rows={5} cols={7} />
           ) : (
             <Table>
               <TableHeader>

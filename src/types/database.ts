@@ -244,6 +244,7 @@ export interface Database {
           content: string
           type: 'death_notice' | 'meeting' | 'general'
           is_public: boolean
+          scheduled_date: string | null
           created_by: string | null
           created_at: string
           updated_at: string
@@ -254,6 +255,7 @@ export interface Database {
           content: string
           type?: 'death_notice' | 'meeting' | 'general'
           is_public?: boolean
+          scheduled_date?: string | null
           created_by?: string | null
           created_at?: string
           updated_at?: string
@@ -264,6 +266,7 @@ export interface Database {
           content?: string
           type?: 'death_notice' | 'meeting' | 'general'
           is_public?: boolean
+          scheduled_date?: string | null
           created_by?: string | null
           created_at?: string
           updated_at?: string

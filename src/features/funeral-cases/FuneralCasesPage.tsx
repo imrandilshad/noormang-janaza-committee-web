@@ -15,6 +15,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { supabase } from '@/lib/supabase'
+import { TableSkeleton } from '@/components/shared/Skeletons'
 import { formatDate, formatCurrency } from '@/lib/utils'
 import type { FuneralCase } from '@/types/database'
 
@@ -132,7 +133,7 @@ export function FuneralCasesPage() {
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <div className="text-center py-8 text-muted-foreground">{t('common.loading')}</div>
+            <TableSkeleton rows={5} cols={8} />
           ) : (
             <Table>
               <TableHeader>

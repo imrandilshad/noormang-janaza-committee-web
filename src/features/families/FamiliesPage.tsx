@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { supabase } from '@/lib/supabase'
+import { TableSkeleton } from '@/components/shared/Skeletons'
 import type { Family } from '@/types/database'
 
 const familySchema = z.object({
@@ -101,7 +102,7 @@ export function FamiliesPage() {
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <div className="text-center py-8 text-muted-foreground">{t('common.loading')}</div>
+            <TableSkeleton rows={5} cols={5} />
           ) : (
             <Table>
               <TableHeader>

@@ -92,7 +92,7 @@ export function PublicHomePage() {
       </section>
 
       {/* Stats */}
-      <section className="py-12 border-b">
+      <section className="py-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-center text-xl font-semibold text-muted-foreground mb-8">
             {t('public.statsTitle')}
@@ -130,7 +130,7 @@ export function PublicHomePage() {
       </section>
 
       {/* Recent Announcements */}
-      <section className="py-12 border-b">
+      <section className="py-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-bold">{t('public.recentAnnouncements')}</h2>
