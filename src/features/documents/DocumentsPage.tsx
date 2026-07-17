@@ -23,7 +23,7 @@ import type { Document } from '@/types/database'
 const documentSchema = z.object({
   title: z.string().min(1, 'Required'),
   document_type: z.enum(['death_certificate', 'receipt', 'meeting_minutes', 'other']),
-  file_url: z.string().url('Must be a valid URL'),
+  file_url: z.string().min(1, 'Please upload a file'),
   funeral_case_id: z.string().optional(),
 })
 type DocumentForm = z.infer<typeof documentSchema>
@@ -122,7 +122,7 @@ export function DocumentsPage() {
 
   return (
     <div className="space-y-4">
-      <div className="sticky top-0 z-20 bg-background pt-4 lg:pt-6 pb-3 flex items-center justify-between">
+      <div className="sticky top-0 z-20 bg-background pt-3 pb-2 flex items-center justify-between">
         <h1 className="text-2xl font-bold">{t('menu.documents')}</h1>
         <Button onClick={openAdd}><Plus className="mr-2 h-4 w-4" />Add Document</Button>
       </div>
@@ -253,9 +253,9 @@ export function DocumentsPage() {
                 />
               </div>
               <p className="text-xs text-muted-foreground">Or paste a URL (Google Drive, Dropbox, etc.)</p>
-              <Input {...register('file_url')} type="url" placeholder="https://…" />
+              <Input {...register('file_url')} type="text" placeholder="https://…" />
               {errors.file_url && <p className="text-xs text-destructive">{errors.file_url.message}</p>}
-              {watch('file_url') && !errors.file_url && (
+              {watch('file_url') && (
                 <p className="text-xs text-green-600 flex items-center gap-1">
                   <FileText className="h-3 w-3" /> File ready
                 </p>

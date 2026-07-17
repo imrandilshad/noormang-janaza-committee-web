@@ -70,7 +70,7 @@ export function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <div className="sticky top-0 z-20 bg-background pt-4 lg:pt-6 pb-3">
+      <div className="sticky top-0 z-20 bg-background pt-3 pb-2">
         <h1 className="text-2xl font-bold">{t('dashboard.title')}</h1>
         <p className="text-muted-foreground">{t('dashboard.welcome')}</p>
       </div>

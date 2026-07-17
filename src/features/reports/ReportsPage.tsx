@@ -53,7 +53,7 @@ export function ReportsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="sticky top-0 z-20 bg-background pt-4 lg:pt-6 pb-3">
+      <div className="sticky top-0 z-20 bg-background pt-3 pb-2">
         <h1 className="text-2xl font-bold">{t('report.financialReport')}</h1>
       </div>
 
@@ -79,18 +79,18 @@ export function ReportsPage() {
       ) : (
         <>
       {/* Summary */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <Card>
-          <CardHeader><CardTitle className="text-sm">{t('report.totalExpenses')}</CardTitle></CardHeader>
-          <CardContent><p className="text-2xl font-bold text-destructive">{formatCurrency(totalExpenses)}</p></CardContent>
+          <CardHeader className="pb-2"><CardTitle className="text-sm">{t('report.totalExpenses')}</CardTitle></CardHeader>
+          <CardContent><p className="text-xl font-bold text-destructive">{formatCurrency(totalExpenses)}</p></CardContent>
         </Card>
         <Card>
-          <CardHeader><CardTitle className="text-sm">{t('report.totalIncome')}</CardTitle></CardHeader>
-          <CardContent><p className="text-2xl font-bold text-green-600">{formatCurrency(totalCollected)}</p></CardContent>
+          <CardHeader className="pb-2"><CardTitle className="text-sm">{t('report.totalIncome')}</CardTitle></CardHeader>
+          <CardContent><p className="text-xl font-bold text-green-600">{formatCurrency(totalCollected)}</p></CardContent>
         </Card>
         <Card>
-          <CardHeader><CardTitle className="text-sm">{t('report.balance')}</CardTitle></CardHeader>
-          <CardContent><p className="text-2xl font-bold">{formatCurrency(totalCollected - totalExpenses)}</p></CardContent>
+          <CardHeader className="pb-2"><CardTitle className="text-sm">{t('report.balance')}</CardTitle></CardHeader>
+          <CardContent><p className="text-xl font-bold">{formatCurrency(totalCollected - totalExpenses)}</p></CardContent>
         </Card>
       </div>
 

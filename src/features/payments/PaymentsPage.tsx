@@ -93,7 +93,7 @@ export function PaymentsPage() {
 
   return (
     <div className="space-y-4">
-      <div className="sticky top-0 z-20 bg-background pt-4 lg:pt-6 pb-3 flex items-center justify-between">
+      <div className="sticky top-0 z-20 bg-background pt-3 pb-2 flex items-center justify-between">
         <h1 className="text-2xl font-bold">{t('payment.paymentHistory')}</h1>
         <Button onClick={() => { reset({ payment_method: 'cash', payment_date: new Date().toISOString().split('T')[0] }); setOpen(true) }}>
           <Plus className="mr-2 h-4 w-4" />

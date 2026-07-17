@@ -41,28 +41,29 @@ export function CollectionsPage() {
 
   return (
     <div className="space-y-4">
-      <div className="sticky top-0 z-20 bg-background pt-4 lg:pt-6 pb-3">
+      <div className="sticky top-0 z-20 bg-background pt-3 pb-2">
         <h1 className="text-2xl font-bold">{t('collection.collectionList')}</h1>
+        <p className="text-xs text-muted-foreground mt-0.5">Collections are auto-generated from funeral cases. Use the Payments page to record member payments.</p>
       </div>
 
       {/* Summary */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <Card>
-          <CardContent className="pt-6">
+          <CardContent className="pt-4 pb-4">
             <p className="text-sm text-muted-foreground">{t('collection.amountDue')}</p>
-            <p className="text-2xl font-bold">{formatCurrency(totals.due)}</p>
+            <p className="text-xl font-bold">{formatCurrency(totals.due)}</p>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="pt-6">
+          <CardContent className="pt-4 pb-4">
             <p className="text-sm text-muted-foreground">{t('collection.amountPaid')}</p>
-            <p className="text-2xl font-bold text-green-600">{formatCurrency(totals.paid)}</p>
+            <p className="text-xl font-bold text-green-600">{formatCurrency(totals.paid)}</p>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="pt-6">
+          <CardContent className="pt-4 pb-4">
             <p className="text-sm text-muted-foreground">{t('collection.outstanding')}</p>
-            <p className="text-2xl font-bold text-destructive">{formatCurrency(totals.due - totals.paid)}</p>
+            <p className="text-xl font-bold text-destructive">{formatCurrency(totals.due - totals.paid)}</p>
           </CardContent>
         </Card>
       </div>
@@ -72,6 +73,7 @@ export function CollectionsPage() {
           {isLoading ? (
             <TableSkeleton rows={5} cols={7} />
           ) : (
+            <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -106,6 +108,7 @@ export function CollectionsPage() {
                 )}
               </TableBody>
             </Table>
+            </div>
           )}
         </CardContent>
       </Card>

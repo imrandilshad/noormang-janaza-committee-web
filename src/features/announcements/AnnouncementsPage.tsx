@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { supabase } from '@/lib/supabase'
@@ -78,9 +79,9 @@ export function AnnouncementsPage() {
 
   return (
     <div className="space-y-4">
-      <div className="sticky top-0 z-20 bg-background pt-4 lg:pt-6 pb-3 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">{t('announcement.announcementList')}</h1>
-        <Button onClick={() => { setEditing(null); reset({ type: 'general', is_public: false }); setOpen(true) }}>
+      <div className="sticky top-0 z-20 bg-background pt-3 pb-2 flex flex-col sm:flex-row items-start sm:items-center gap-2">
+        <h1 className="text-2xl font-bold flex-1">{t('announcement.announcementList')}</h1>
+        <Button className="w-full sm:w-auto shrink-0" onClick={() => { setEditing(null); reset({ type: 'general', is_public: false }); setOpen(true) }}>
           <Plus className="mr-2 h-4 w-4" />
           {t('announcement.addAnnouncement')}
         </Button>
@@ -110,9 +111,23 @@ export function AnnouncementsPage() {
                       <p className="text-sm text-muted-foreground">{a.content}</p>
                       <p className="text-xs text-muted-foreground">{formatDate(a.created_at)}</p>
                     </div>
-                    <div className="flex gap-2 shrink-0">
-                      <Button variant="ghost" size="icon" onClick={() => openEdit(a)}><Pencil className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="icon" className="text-destructive" onClick={() => deleteMutation.mutate(a.id)}><Trash2 className="h-4 w-4" /></Button>
+                    <div className="flex gap-1 shrink-0">
+                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(a)}><Pencil className="h-3.5 w-3.5" /></Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"><Trash2 className="h-3.5 w-3.5" /></Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete Announcement</AlertDialogTitle>
+                            <AlertDialogDescription>Delete "<strong>{a.title}</strong>"? This cannot be undone.</AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => deleteMutation.mutate(a.id)}>{t('common.delete')}</AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </div>
                   </div>
                 </CardContent>
