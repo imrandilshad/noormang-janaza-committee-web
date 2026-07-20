@@ -36,9 +36,7 @@ async function fetchDashboardStats(): Promise<DashboardStats> {
 
   const totalExpenses = expenseRows.reduce((s, e) => s + e.amount, 0)
   const totalCollections = collectionRows.reduce((s, c) => s + c.amount_paid, 0)
-  const pendingCollections = collectionRows
-    .filter((c) => c.status !== 'paid')
-    .reduce((s, c) => s + (c.amount_due - c.amount_paid), 0)
+  const pendingCollections = totalExpenses - totalCollections
 
   return {
     totalMembers: allMembers.count ?? 0,
