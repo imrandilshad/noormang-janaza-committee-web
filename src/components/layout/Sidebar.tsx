@@ -47,7 +47,7 @@ export function Sidebar() {
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-20 bg-black/50 lg:hidden"
+          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -55,7 +55,7 @@ export function Sidebar() {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed top-0 z-30 h-full w-64 bg-card transition-transform duration-300 lg:translate-x-0 lg:static lg:z-auto",
+          "fixed top-0 z-50 h-full w-64 bg-card transition-transform duration-300 lg:translate-x-0 lg:static lg:z-auto",
           isRTL ? "right-0 border-l" : "left-0 border-r",
           sidebarOpen
             ? "translate-x-0"

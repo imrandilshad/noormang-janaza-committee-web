@@ -24,7 +24,8 @@
     "yes": "ہاں",
     "no": "نہیں",
     "active": "فعال",
-    "inactive": "غیر فعال"
+    "inactive": "غیر فعال",
+    "allCategories": "تمام اقسام"
   },
   "menu": {
     "dashboard": "ڈیش بورڈ",
@@ -44,6 +45,7 @@
   "dashboard": {
     "title": "ڈیش بورڈ",
     "totalMembers": "کل اراکین",
+    "activeMembers": "فعال اراکین",
     "totalFamilies": "کل خاندان",
     "totalFuneralCases": "کل جنازے",
     "totalExpenses": "کل اخراجات",
@@ -51,6 +53,7 @@
     "recentActivities": "حالیہ سرگرمیاں",
     "pendingCollections": "زیر التواء وصولیاں",
     "openCases": "جاری کیسز",
+    "closedCases": "بند کیسز",
     "welcome": "جنازہ کمیٹی پورٹل میں خوش آمدید"
   },
   "member": {
@@ -69,7 +72,8 @@
     "memberList": "اراکین کی فہرست",
     "active": "فعال",
     "inactive": "غیر فعال",
-    "deceased": "مرحوم"
+    "deceased": "مرحوم",
+    "searchPlaceholder": "نام، ID یا فون سے تلاش کریں…"
   },
   "family": {
     "familyName": "خاندان کا نام",
@@ -78,7 +82,8 @@
     "members": "اراکین",
     "addFamily": "خاندان شامل کریں",
     "editFamily": "خاندان میں ترمیم کریں",
-    "familyList": "خاندانوں کی فہرست"
+    "familyList": "خاندانوں کی فہرست",
+    "searchPlaceholder": "خاندان کے نام یا گاؤں سے تلاش کریں…"
   },
   "funeral": {
     "caseNumber": "کیس نمبر",
@@ -95,7 +100,8 @@
     "editCase": "کیس میں ترمیم کریں",
     "caseList": "جنازہ کیسز",
     "open": "جاری",
-    "closed": "مکمل شدہ"
+    "closed": "مکمل شدہ",
+    "searchPlaceholder": "کیس نمبر یا نام سے تلاش کریں…"
   },
   "expense": {
     "category": "زمرہ",
@@ -109,19 +115,29 @@
     "miscellaneous": "متفرق",
     "addExpense": "اخراجات شامل کریں",
     "editExpense": "اخراجات میں ترمیم کریں",
-    "expenseList": "اخراجات"
+    "expenseList": "اخراجات",
+    "searchPlaceholder": "کیس نمبر یا تفصیل سے تلاش کریں…"
   },
   "collection": {
     "amountDue": "واجب الادا رقم",
     "amountPaid": "ادا شدہ رقم",
-    "outstanding": "بقایا",
+    "outstanding": "باقی رقم",
     "status": "حیثیت",
     "dueDate": "آخری تاریخ",
     "pending": "زیر التواء",
     "partial": "جزوی ادائیگی",
     "paid": "ادا شدہ",
     "collectionList": "وصولیاں",
-    "perMemberAmount": "فی رکن رقم"
+    "perMemberAmount": "فی رکن رقم",
+    "generateCollections": "وصولیاں بنائیں",
+    "generateDesc": "منتخب جنازہ کیس کے لیے تمام فعال اراکین کے وصولی ریکارڈ بنائیں۔",
+    "selectCase": "جنازہ کیس منتخب کریں",
+    "totalExpenseForCase": "کیس کے کل اخراجات",
+    "generateNote": "فی رکن رقم = کل اخراجات ÷ فعال اراکین",
+    "generate": "بنائیں",
+    "subtitle": "وصولی ریکارڈ فی جنازہ کیس بنائے جاتے ہیں۔ ادائیگیاں درج کرنے کے لیے پیمنٹس صفحہ استعمال کریں۔",
+    "emptyState": "ابھی کوئی وصولی نہیں۔ جنازہ کیس کے لیے ریکارڈ بنانے کے لیے 'وصولیاں بنائیں' پر کلک کریں۔",
+    "searchPlaceholder": "نام یا کیس نمبر سے تلاش کریں…"
   },
   "payment": {
     "amountDue": "واجب الادا رقم",
@@ -148,7 +164,8 @@
     "general": "عمومی",
     "isPublic": "عوامی",
     "addAnnouncement": "اعلان شامل کریں",
-    "announcementList": "اعلانات"
+    "announcementList": "اعلانات",
+    "searchPlaceholder": "عنوان یا مواد سے تلاش کریں…"
   },
   "report": {
     "financialReport": "مالی رپورٹ",
@@ -201,7 +218,7 @@
     "filterDeathNotice": "وفات نامے",
     "filterMeeting": "اجلاس",
     "filterGeneral": "عمومی",
-    "searchMembers": "اراکین تلاش کریں...",
+    "searchMembers": "نام، ID یا حیثیت سے تلاش کریں…",
     "memberDirectory": "اراکین کی فہرست",
     "footerText": "نورمنگ میوچل کمیٹی",
     "footerRights": "جملہ حقوق محفوظ ہیں",
@@ -225,6 +242,8 @@
     "joined": "شمولیت",
     "active": "فعال",
     "inactive": "غیر فعال",
-    "deceased": "مرحوم"
+    "deceased": "مرحوم",
+    "readMore": "مزید پڑھیں",
+    "readLess": "کم کریں"
   }
 }

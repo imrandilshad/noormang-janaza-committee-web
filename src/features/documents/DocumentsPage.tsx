@@ -121,7 +121,7 @@ export function DocumentsPage() {
   )
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 pb-4">
       <div className="sticky top-0 z-20 bg-background pt-3 pb-2 flex items-center justify-between">
         <h1 className="text-2xl font-bold">{t('menu.documents')}</h1>
         <Button onClick={openAdd}><Plus className="mr-2 h-4 w-4" />Add Document</Button>

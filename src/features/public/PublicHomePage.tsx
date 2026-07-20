@@ -1,13 +1,65 @@
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from '@tanstack/react-query'
-import { Users, Home, Heart, Megaphone, ArrowRight, MapPin, Calendar } from 'lucide-react'
+import { useState } from 'react'
+import { Users, Home, Heart, Megaphone, ArrowRight, MapPin, Calendar, ChevronDown, ChevronUp } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { formatDate } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { AnimatedNumber } from '@/components/shared/AnimatedNumber'
+
+const PREVIEW_LENGTH = 120
+
+function ExpandableAnnouncementCard({
+  announcement: a,
+  typeLabel,
+  typeVariant,
+}: {
+  announcement: { id: string; title: string; content: string; type: string; created_at: string }
+  typeLabel: Record<string, string>
+  typeVariant: Record<string, 'destructive' | 'default' | 'secondary'>
+}) {
+  const { t } = useTranslation()
+  const [expanded, setExpanded] = useState(false)
+  const isLong = a.content.length > PREVIEW_LENGTH
+
+  return (
+    <Card>
+      <CardHeader className="pb-2">
+        <div className="flex items-start justify-between gap-2">
+          <p className="font-semibold text-sm leading-snug">{a.title}</p>
+          <Badge variant={typeVariant[a.type] ?? 'secondary'} className="shrink-0 text-xs">
+            {typeLabel[a.type] ?? a.type}
+          </Badge>
+        </div>
+      </CardHeader>
+      <CardContent className="text-sm text-muted-foreground">
+        <p className="whitespace-pre-line">
+          {expanded || !isLong ? a.content : `${a.content.slice(0, PREVIEW_LENGTH)}…`}
+        </p>
+        {isLong && (
+          <button
+            type="button"
+            onClick={() => setExpanded((v) => !v)}
+            className="mt-1 flex items-center gap-1 text-xs text-primary hover:underline focus:outline-none"
+          >
+            {expanded ? (
+              <><ChevronUp className="h-3 w-3" />{t('public.readLess')}</>
+            ) : (
+              <><ChevronDown className="h-3 w-3" />{t('public.readMore')}</>
+            )}
+          </button>
+        )}
+        <p className="mt-2 text-xs flex items-center gap-1">
+          <Calendar className="h-3 w-3" />
+          {formatDate(a.created_at)}
+        </p>
+      </CardContent>
+    </Card>
+  )
+}
 
 export function PublicHomePage() {
   const { t } = useTranslation()
@@ -62,7 +114,6 @@ export function PublicHomePage() {
 
   return (
     <div>
-      {/* Hero */}
       <section className="bg-gradient-to-br from-primary/10 via-background to-background py-16 sm:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary text-primary-foreground mb-6">
@@ -143,23 +194,12 @@ export function PublicHomePage() {
           {announcements && announcements.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {announcements.map((a) => (
-                <Card key={a.id}>
-                  <CardHeader className="pb-2">
-                    <div className="flex items-start justify-between gap-2">
-                      <p className="font-semibold text-sm leading-snug">{a.title}</p>
-                      <Badge variant={typeVariant[a.type] ?? 'secondary'} className="shrink-0 text-xs">
-                        {typeLabel[a.type] ?? a.type}
-                      </Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="text-sm text-muted-foreground">
-                    <p className="line-clamp-3">{a.content}</p>
-                    <p className="mt-2 text-xs flex items-center gap-1">
-                      <Calendar className="h-3 w-3" />
-                      {formatDate(a.created_at)}
-                    </p>
-                  </CardContent>
-                </Card>
+                <ExpandableAnnouncementCard
+                  key={a.id}
+                  announcement={a}
+                  typeLabel={typeLabel}
+                  typeVariant={typeVariant}
+                />
               ))}
             </div>
           ) : (

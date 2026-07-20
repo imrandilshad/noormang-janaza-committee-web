@@ -46,6 +46,7 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/lib/supabase";
 import { TableSkeleton } from "@/components/shared/Skeletons";
+import { SearchInput } from "@/components/shared/SearchInput";
 import { formatDate, formatCurrency } from "@/lib/utils";
 import type { Expense } from "@/types/database";
 
@@ -71,6 +72,8 @@ export function ExpensesPage() {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Expense | null>(null);
+  const [search, setSearch] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
 
   const { data: expenses = [], isLoading } = useQuery({
     queryKey: ["expenses"],
@@ -140,7 +143,7 @@ export function ExpensesPage() {
   });
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 pb-4">
       <div className="sticky top-0 z-20 bg-background pt-3 pb-2 flex items-center justify-between">
         <h1 className="text-2xl font-bold">{t("expense.expenseList")}</h1>
         <Button
@@ -159,10 +162,43 @@ export function ExpensesPage() {
       </div>
 
       <Card>
-        <CardContent className="pt-6">
+        <CardContent className="pt-4 pb-4">
+          <div className="flex flex-col sm:flex-row gap-2 mb-4">
+            <SearchInput
+              value={search}
+              onChange={setSearch}
+              placeholder={t("expense.searchPlaceholder")}
+              className="w-full sm:max-w-sm"
+            />
+            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+              <SelectTrigger className="w-full sm:w-44">
+                <SelectValue placeholder={t("expense.category")} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">{t("common.allCategories")}</SelectItem>
+                <SelectItem value="transportation">{t("expense.transportation")}</SelectItem>
+                <SelectItem value="food">{t("expense.food")}</SelectItem>
+                <SelectItem value="shroud">{t("expense.shroud")}</SelectItem>
+                <SelectItem value="miscellaneous">{t("expense.miscellaneous")}</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
           {isLoading ? (
             <TableSkeleton rows={5} cols={7} />
-          ) : (
+          ) : (() => {
+            const filtered = expenses.filter((e) => {
+              const fc = (e as typeof e & { funeral_cases: { case_number: string; deceased_name: string } }).funeral_cases
+              const matchesSearch = !search || (
+                fc?.case_number?.includes(search) ||
+                fc?.deceased_name?.toLowerCase().includes(search.toLowerCase()) ||
+                e.description?.toLowerCase().includes(search.toLowerCase()) ||
+                t(`expense.${e.category}`).toLowerCase().includes(search.toLowerCase())
+              )
+              const matchesCategory = categoryFilter === "all" || e.category === categoryFilter
+              return matchesSearch && matchesCategory
+            })
+            return (
+            <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -177,7 +213,7 @@ export function ExpensesPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {expenses.length === 0 ? (
+                {filtered.length === 0 ? (
                   <TableRow>
                     <TableCell
                       colSpan={6}
@@ -187,7 +223,7 @@ export function ExpensesPage() {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  expenses.map((e) => (
+                  filtered.map((e) => (
                     <TableRow key={e.id}>
                       <TableCell className="font-mono text-sm">
                         {
@@ -270,7 +306,9 @@ export function ExpensesPage() {
                 )}
               </TableBody>
             </Table>
-          )}
+            </div>
+            )
+          })()}
         </CardContent>
       </Card>
 

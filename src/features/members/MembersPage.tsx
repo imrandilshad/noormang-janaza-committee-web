@@ -2,13 +2,14 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Plus, Pencil, Trash2 } from 'lucide-react'
+import { SearchInput } from '@/components/shared/SearchInput'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
@@ -134,7 +135,7 @@ export function MembersPage() {
   )
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 pb-4">
       <div className="sticky top-0 z-20 bg-background pt-3 pb-2 flex items-center justify-between">
         <h1 className="text-2xl font-bold">{t('member.memberList')}</h1>
         <Button onClick={openAdd}>
@@ -144,18 +145,17 @@ export function MembersPage() {
       </div>
 
       <Card>
-        <CardHeader>
-          <Input
-            placeholder={t('common.search')}
+        <CardContent className="pt-4 pb-4">
+          <SearchInput
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="max-w-sm"
+            onChange={setSearch}
+            placeholder={t('member.searchPlaceholder')}
+            className="w-full sm:max-w-sm mb-4"
           />
-        </CardHeader>
-        <CardContent>
           {isLoading ? (
             <TableSkeleton rows={5} cols={7} />
           ) : (
+            <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -217,6 +217,7 @@ export function MembersPage() {
                 )}
               </TableBody>
             </Table>
+            </div>
           )}
         </CardContent>
       </Card>

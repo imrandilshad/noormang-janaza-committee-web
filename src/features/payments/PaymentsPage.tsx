@@ -92,7 +92,7 @@ export function PaymentsPage() {
   })
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 pb-4">
       <div className="sticky top-0 z-20 bg-background pt-3 pb-2 flex items-center justify-between">
         <h1 className="text-2xl font-bold">{t('payment.paymentHistory')}</h1>
         <Button onClick={() => { reset({ payment_method: 'cash', payment_date: new Date().toISOString().split('T')[0] }); setOpen(true) }}>
@@ -106,6 +106,7 @@ export function PaymentsPage() {
           {isLoading ? (
             <TableSkeleton rows={5} cols={7} />
           ) : (
+            <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -140,6 +141,7 @@ export function PaymentsPage() {
                 )}
               </TableBody>
             </Table>
+            </div>
           )}
         </CardContent>
       </Card>

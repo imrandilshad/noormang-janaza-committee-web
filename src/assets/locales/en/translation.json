@@ -24,7 +24,8 @@
     "yes": "Yes",
     "no": "No",
     "active": "Active",
-    "inactive": "Inactive"
+    "inactive": "Inactive",
+    "allCategories": "All Categories"
   },
   "menu": {
     "dashboard": "Dashboard",
@@ -44,6 +45,7 @@
   "dashboard": {
     "title": "Dashboard",
     "totalMembers": "Total Members",
+    "activeMembers": "Active Members",
     "totalFamilies": "Total Families",
     "totalFuneralCases": "Total Funeral Cases",
     "totalExpenses": "Total Expenses",
@@ -69,7 +71,8 @@
     "memberList": "Member List",
     "active": "Active",
     "inactive": "Inactive",
-    "deceased": "Deceased"
+    "deceased": "Deceased",
+    "searchPlaceholder": "Search by name, ID or phone…"
   },
   "family": {
     "familyName": "Family Name",
@@ -78,7 +81,8 @@
     "members": "Members",
     "addFamily": "Add Family",
     "editFamily": "Edit Family",
-    "familyList": "Family List"
+    "familyList": "Family List",
+    "searchPlaceholder": "Search by family name or village…"
   },
   "funeral": {
     "caseNumber": "Case Number",
@@ -95,7 +99,8 @@
     "editCase": "Edit Case",
     "caseList": "Funeral Cases",
     "open": "Open",
-    "closed": "Closed"
+    "closed": "Closed",
+    "searchPlaceholder": "Search by case number or name…"
   },
   "expense": {
     "category": "Category",
@@ -109,19 +114,29 @@
     "miscellaneous": "Miscellaneous",
     "addExpense": "Add Expense",
     "editExpense": "Edit Expense",
-    "expenseList": "Expenses"
+    "expenseList": "Expenses",
+    "searchPlaceholder": "Search by case number or description…"
   },
   "collection": {
     "amountDue": "Amount Due",
     "amountPaid": "Amount Paid",
-    "outstanding": "Outstanding",
+    "outstanding": "Pending",
     "status": "Status",
     "dueDate": "Due Date",
     "pending": "Pending",
     "partial": "Partial",
     "paid": "Paid",
     "collectionList": "Collections",
-    "perMemberAmount": "Per Member Amount"
+    "perMemberAmount": "Per Member Amount",
+    "generateCollections": "Generate Collections",
+    "generateDesc": "Creates a collection record for every active member based on total expenses for the selected funeral case.",
+    "selectCase": "Select a funeral case",
+    "totalExpenseForCase": "Total case expenses",
+    "generateNote": "Amount per member = Total Expenses \u00f7 Active Members",
+    "generate": "Generate",
+    "subtitle": "Collection records are generated per funeral case. Use the Payments page to record member payments.",
+    "emptyState": "No collections yet. Click 'Generate Collections' to create records for a funeral case.",
+    "searchPlaceholder": "Search by name or case number…"
   },
   "payment": {
     "amountDue": "Amount Due",
@@ -148,7 +163,8 @@
     "general": "General",
     "isPublic": "Public",
     "addAnnouncement": "Add Announcement",
-    "announcementList": "Announcements"
+    "announcementList": "Announcements",
+    "searchPlaceholder": "Search by title or content…"
   },
   "report": {
     "financialReport": "Financial Report",
@@ -201,7 +217,7 @@
     "filterDeathNotice": "Death Notices",
     "filterMeeting": "Meetings",
     "filterGeneral": "General",
-    "searchMembers": "Search members...",
+    "searchMembers": "Search by name, ID or status…",
     "memberDirectory": "Member Directory",
     "footerText": "Noormang Mutual Committee",
     "footerRights": "All rights reserved",
@@ -225,6 +241,22 @@
     "joined": "Joined",
     "active": "Active",
     "inactive": "Inactive",
-    "deceased": "Deceased"
+    "deceased": "Deceased",
+    "readMore": "Read More",
+    "readLess": "Read Less"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "totalMembers": "Total Members",
+    "activeMembers": "Active Members",
+    "totalFamilies": "Total Families",
+    "totalFuneralCases": "Total Funeral Cases",
+    "totalExpenses": "Total Expenses",
+    "totalCollections": "Total Collections",
+    "recentActivities": "Recent Activities",
+    "pendingCollections": "Pending Collections",
+    "openCases": "Open Cases",
+    "closedCases": "Closed Cases",
+    "welcome": "Welcome to Noormang Mutual Committee Portal"
   }
 }

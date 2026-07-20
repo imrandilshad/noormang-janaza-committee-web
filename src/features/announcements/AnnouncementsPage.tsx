@@ -78,7 +78,7 @@ export function AnnouncementsPage() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 pb-4">
       <div className="sticky top-0 z-20 bg-background pt-3 pb-2 flex flex-col sm:flex-row items-start sm:items-center gap-2">
         <h1 className="text-2xl font-bold flex-1">{t('announcement.announcementList')}</h1>
         <Button className="w-full sm:w-auto shrink-0" onClick={() => { setEditing(null); reset({ type: 'general', is_public: false }); setOpen(true) }}>

@@ -55,6 +55,11 @@
   * {
     @apply border-border;
   }
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+  }
   body {
     @apply bg-background text-foreground;
     margin: 0;
@@ -64,7 +69,8 @@
     -moz-osx-font-smoothing: grayscale;
   }
   #root {
-    min-height: 100svh;
+    height: 100%;
+    overflow: hidden;
   }
 }
 
