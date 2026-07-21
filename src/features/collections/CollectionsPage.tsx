@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, RefreshCw } from "lucide-react";
+import { Plus, RefreshCw, ChevronDown, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -12,14 +12,8 @@ import {
   DialogFooter,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -48,6 +42,19 @@ export function CollectionsPage() {
   const [genOpen, setGenOpen] = useState(false);
   const [selectedCase, setSelectedCase] = useState("");
   const [search, setSearch] = useState("");
+  const [caseSearch, setCaseSearch] = useState("");
+  const [caseDropdownOpen, setCaseDropdownOpen] = useState(false);
+  const caseDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (caseDropdownRef.current && !caseDropdownRef.current.contains(e.target as Node)) {
+        setCaseDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const { data: collections = [], isLoading } = useQuery({
     queryKey: ["collections"],
@@ -169,6 +176,32 @@ export function CollectionsPage() {
   const selectedCaseTotal =
     selectedCaseData?.expenses?.reduce((s, e) => s + e.amount, 0) ?? 0;
 
+  const filteredFuneralCases = funeralCases.filter(
+    (c) =>
+      !caseSearch ||
+      c.case_number.toLowerCase().includes(caseSearch.toLowerCase()) ||
+      c.deceased_name.toLowerCase().includes(caseSearch.toLowerCase()),
+  );
+
+  // Group filtered collections by funeral case for clearer display
+  const grouped = Object.entries(
+    filtered.reduce(
+      (acc, c) => {
+        const key = c.funeral_case_id;
+        if (!acc[key]) acc[key] = { caseInfo: c.funeral_cases, items: [] };
+        acc[key].items.push(c);
+        return acc;
+      },
+      {} as Record<
+        string,
+        {
+          caseInfo: { case_number: string; deceased_name: string } | null;
+          items: typeof filtered;
+        }
+      >,
+    ),
+  );
+
   return (
     <div className="space-y-4 pb-4">
       {/* Sticky header — compact on mobile */}
@@ -230,7 +263,7 @@ export function CollectionsPage() {
 
       {/* Table card */}
       <Card>
-        <CardContent className="pt-4 pb-4 overflow-x-auto">
+        <CardContent className="pt-4 pb-4">
           <SearchInput
             value={search}
             onChange={setSearch}
@@ -238,12 +271,13 @@ export function CollectionsPage() {
             className="w-full mb-4"
           />
           {isLoading ? (
-            <TableSkeleton rows={5} cols={7} />
+            <TableSkeleton rows={5} cols={6} />
           ) : (
+            <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Case</TableHead>
+                  <TableHead>Case / Deceased</TableHead>
                   <TableHead>{t("member.fullName")}</TableHead>
                   <TableHead>{t("collection.amountDue")}</TableHead>
                   <TableHead>{t("collection.amountPaid")}</TableHead>
@@ -252,7 +286,7 @@ export function CollectionsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filtered.length === 0 ? (
+                {grouped.length === 0 ? (
                   <TableRow>
                     <TableCell
                       colSpan={6}
@@ -262,44 +296,98 @@ export function CollectionsPage() {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  filtered.map((c) => (
-                    <TableRow key={c.id}>
-                      <TableCell className="font-mono text-sm">
-                        {c.funeral_cases?.case_number}
-                      </TableCell>
-                      <TableCell>{c.members?.full_name}</TableCell>
-                      <TableCell>{formatCurrency(c.amount_due)}</TableCell>
-                      <TableCell className="text-green-600">
-                        {formatCurrency(c.amount_paid)}
-                      </TableCell>
-                      <TableCell className="text-destructive">
-                        {formatCurrency(c.amount_due - c.amount_paid)}
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={
-                            statusVariant[c.status] as
-                              | "default"
-                              | "secondary"
-                              | "destructive"
-                              | "outline"
-                          }
+                  grouped.map(([caseId, { caseInfo, items }]) => {
+                    const caseDue = items.reduce((s, c) => s + c.amount_due, 0);
+                    const casePaid = items.reduce((s, c) => s + c.amount_paid, 0);
+                    return (
+                      <>
+                        {/* Case group header */}
+                        <TableRow
+                          key={`hdr-${caseId}`}
+                          className="bg-muted/40 hover:bg-muted/40 border-t-2"
                         >
-                          {t(`collection.${c.status}`)}
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
-                  ))
+                          <TableCell colSpan={6} className="py-2 px-4">
+                            <div className="flex flex-wrap items-center justify-between gap-2">
+                              <div className="flex items-center gap-3">
+                                <span className="font-mono text-sm font-semibold">
+                                  {caseInfo?.case_number ?? "—"}
+                                </span>
+                                <span className="text-sm">
+                                  <span className="text-muted-foreground">Deceased: </span>
+                                  <span className="font-medium">
+                                    {caseInfo?.deceased_name ?? "—"}
+                                  </span>
+                                </span>
+                                <Badge variant="outline" className="text-xs">
+                                  {items.length} member{items.length !== 1 ? "s" : ""}
+                                </Badge>
+                              </div>
+                              <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                                <span>
+                                  Due:{" "}
+                                  <span className="font-medium text-foreground">
+                                    {formatCurrency(caseDue)}
+                                  </span>
+                                </span>
+                                <span>
+                                  Paid:{" "}
+                                  <span className="font-medium text-green-600">
+                                    {formatCurrency(casePaid)}
+                                  </span>
+                                </span>
+                                <span>
+                                  Pending:{" "}
+                                  <span className="font-medium text-destructive">
+                                    {formatCurrency(caseDue - casePaid)}
+                                  </span>
+                                </span>
+                              </div>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                        {/* Member rows */}
+                        {items.map((c) => (
+                          <TableRow key={c.id}>
+                            <TableCell className="pl-8 text-xs text-muted-foreground font-mono">
+                              {c.funeral_cases?.case_number}
+                            </TableCell>
+                            <TableCell>{c.members?.full_name}</TableCell>
+                            <TableCell>{formatCurrency(c.amount_due)}</TableCell>
+                            <TableCell className="text-green-600">
+                              {formatCurrency(c.amount_paid)}
+                            </TableCell>
+                            <TableCell className="text-destructive">
+                              {formatCurrency(c.amount_due - c.amount_paid)}
+                            </TableCell>
+                            <TableCell>
+                              <Badge
+                                variant={
+                                  statusVariant[c.status] as
+                                    | "default"
+                                    | "secondary"
+                                    | "destructive"
+                                    | "outline"
+                                }
+                              >
+                                {t(`collection.${c.status}`)}
+                              </Badge>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </>
+                    );
+                  })
                 )}
               </TableBody>
             </Table>
+            </div>
           )}
         </CardContent>
       </Card>
 
       {/* Generate Collections Dialog */}
       <Dialog open={genOpen} onOpenChange={setGenOpen}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto">
+        <DialogContent className="overflow-visible">
           <DialogHeader>
             <DialogTitle>{t("collection.generateCollections")}</DialogTitle>
             <DialogDescription>
@@ -309,18 +397,64 @@ export function CollectionsPage() {
           <div className="space-y-4">
             <div className="space-y-2">
               <Label>{t("funeral.caseNumber")} *</Label>
-              <Select value={selectedCase} onValueChange={setSelectedCase}>
-                <SelectTrigger>
-                  <SelectValue placeholder={t("collection.selectCase")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {funeralCases.map((c) => (
-                    <SelectItem key={c.id} value={c.id}>
-                      {c.case_number} – {c.deceased_name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="relative" ref={caseDropdownRef}>
+                <button
+                  type="button"
+                  className="flex w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                  onClick={() => setCaseDropdownOpen((o) => !o)}
+                >
+                  <span className={selectedCase ? "" : "text-muted-foreground"}>
+                    {selectedCase
+                      ? `${selectedCaseData?.case_number} – ${selectedCaseData?.deceased_name}`
+                      : t("collection.selectCase")}
+                  </span>
+                  <ChevronDown className="h-4 w-4 opacity-50 shrink-0" />
+                </button>
+
+                {caseDropdownOpen && (
+                  <div className="absolute z-50 w-full mt-1 rounded-md border bg-popover shadow-md">
+                    <div className="p-2">
+                      <Input
+                        value={caseSearch}
+                        onChange={(e) => setCaseSearch(e.target.value)}
+                        placeholder="Search by case number or deceased name..."
+                        autoFocus
+                        className="h-8 text-sm"
+                      />
+                    </div>
+                    <div className="max-h-52 overflow-y-auto">
+                      {filteredFuneralCases.length === 0 ? (
+                        <p className="py-6 text-center text-sm text-muted-foreground">
+                          No cases found.
+                        </p>
+                      ) : (
+                        filteredFuneralCases.map((c) => (
+                          <div
+                            key={c.id}
+                            className={`flex items-center gap-2 px-3 py-2 cursor-pointer text-sm hover:bg-accent ${
+                              selectedCase === c.id ? "bg-accent" : ""
+                            }`}
+                            onClick={() => {
+                              setSelectedCase(c.id);
+                              setCaseDropdownOpen(false);
+                              setCaseSearch("");
+                            }}
+                          >
+                            <Check
+                              className={`h-4 w-4 shrink-0 ${selectedCase === c.id ? "opacity-100" : "opacity-0"}`}
+                            />
+                            <span>
+                              <span className="font-mono">{c.case_number}</span>
+                              {" – "}
+                              {c.deceased_name}
+                            </span>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
             {selectedCase && (
               <div className="rounded-md border bg-muted/40 p-3 space-y-1 text-sm">
