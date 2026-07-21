@@ -18,7 +18,13 @@ import { PublicLayout } from '@/features/public/PublicLayout'
 import { PublicHomePage } from '@/features/public/PublicHomePage'
 import { PublicAnnouncementsPage } from '@/features/public/PublicAnnouncementsPage'
 import { PublicFuneralCasesPage } from '@/features/public/PublicFuneralCasesPage'
-import { PublicMembersPage } from '@/features/public/PublicMembersPage'
+import { PublicAboutPage } from '@/features/public/PublicAboutPage'
+import { PublicMembershipPage } from '@/features/public/PublicMembershipPage'
+import { PublicCommitteePage } from '@/features/public/PublicCommitteePage'
+import { PublicDonationPage } from '@/features/public/PublicDonationPage'
+import { PublicDownloadsPage } from '@/features/public/PublicDownloadsPage'
+import { PublicContactPage } from '@/features/public/PublicContactPage'
+import { PublicFaqPage } from '@/features/public/PublicFaqPage'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -40,7 +46,13 @@ export function AppRouter() {
             <Route index element={<PublicHomePage />} />
             <Route path="announcements" element={<PublicAnnouncementsPage />} />
             <Route path="funeral-cases" element={<PublicFuneralCasesPage />} />
-            <Route path="members" element={<PublicMembersPage />} />
+            <Route path="about" element={<PublicAboutPage />} />
+            <Route path="membership" element={<PublicMembershipPage />} />
+            <Route path="committee" element={<PublicCommitteePage />} />
+            <Route path="donate" element={<PublicDonationPage />} />
+            <Route path="downloads" element={<PublicDownloadsPage />} />
+            <Route path="contact" element={<PublicContactPage />} />
+            <Route path="faq" element={<PublicFaqPage />} />
           </Route>
 
           {/* Admin panel */}

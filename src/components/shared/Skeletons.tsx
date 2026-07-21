@@ -180,3 +180,58 @@ export function ReportsSkeleton() {
     </div>
   )
 }
+
+// ─── Public stats (home / about) ──────────────────────────────────────────────
+
+export function PublicStatsSkeleton({ count = 3 }: { count?: number }) {
+  return (
+    <div className={`grid grid-cols-1 sm:grid-cols-${count} gap-6`}>
+      {Array.from({ length: count }).map((_, i) => (
+        <Card key={i} style={{ opacity: Math.max(0.4, 1 - i * 0.2) }}>
+          <CardContent className="pt-6 pb-6 text-center space-y-3">
+            <Skeleton className="h-12 w-12 rounded-full mx-auto" />
+            <Skeleton className="h-10 w-16 mx-auto rounded" />
+            <Skeleton className="h-3 w-24 mx-auto" />
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  )
+}
+
+// ─── Public about-page stat bar ───────────────────────────────────────────────
+
+export function PublicAboutStatsSkeleton() {
+  return (
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+      {Array.from({ length: 4 }).map((_, i) => (
+        <div key={i} className="text-center space-y-2" style={{ opacity: Math.max(0.3, 1 - i * 0.2) }}>
+          <Skeleton className="h-10 w-20 mx-auto rounded" />
+          <Skeleton className="h-3 w-24 mx-auto" />
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// ─── Public mini card grid (home page preview rows) ───────────────────────────
+
+export function PublicMiniCardSkeleton({ count = 3 }: { count?: number }) {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {Array.from({ length: count }).map((_, i) => (
+        <Card key={i} style={{ opacity: Math.max(0.3, 1 - i * 0.28) }}>
+          <CardContent className="pt-4 space-y-2.5">
+            <div className="flex items-start justify-between gap-2">
+              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-5 w-16 rounded-full" />
+            </div>
+            <Skeleton className="h-3 w-full" />
+            <Skeleton className="h-3 w-4/5" />
+            <Skeleton className="h-3 w-24" />
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  )
+}

@@ -2,13 +2,14 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
-import { Users, Home, Heart, Megaphone, ArrowRight, MapPin, Calendar, ChevronDown, ChevronUp } from 'lucide-react'
+import { Users, Home, Heart, Megaphone, ArrowRight, MapPin, Calendar, ChevronDown, ChevronUp, Info, BookOpen, Phone } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { formatDate } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { AnimatedNumber } from '@/components/shared/AnimatedNumber'
+import { PublicStatsSkeleton, PublicMiniCardSkeleton } from '@/components/shared/Skeletons'
 
 const PREVIEW_LENGTH = 120
 
@@ -64,7 +65,7 @@ function ExpandableAnnouncementCard({
 export function PublicHomePage() {
   const { t } = useTranslation()
 
-  const { data: stats } = useQuery({
+  const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ['public-stats'],
     queryFn: async () => {
       const [{ count: members }, { count: families }, { count: cases }] = await Promise.all([
@@ -76,7 +77,7 @@ export function PublicHomePage() {
     },
   })
 
-  const { data: announcements } = useQuery({
+  const { data: announcements, isLoading: announcementsLoading } = useQuery({
     queryKey: ['public-announcements-recent'],
     queryFn: async () => {
       const { data } = await supabase
@@ -89,7 +90,7 @@ export function PublicHomePage() {
     },
   })
 
-  const { data: funeralCases } = useQuery({
+  const { data: funeralCases, isLoading: casesLoading } = useQuery({
     queryKey: ['public-funeral-cases-recent'],
     queryFn: async () => {
       const { data } = await supabase
@@ -126,16 +127,22 @@ export function PublicHomePage() {
             {t('public.heroSubtitle')}
           </p>
           <div className="flex flex-wrap justify-center gap-3">
-            <Link to="/announcements">
-              <Button size="lg" className="gap-2">
-                <Megaphone className="h-4 w-4" />
-                {t('public.announcements')}
-              </Button>
-            </Link>
             <Link to="/funeral-cases">
-              <Button size="lg" variant="outline" className="gap-2">
+              <Button size="lg" className="gap-2">
                 <Heart className="h-4 w-4" />
                 {t('public.funeralCases')}
+              </Button>
+            </Link>
+            <Link to="/about">
+              <Button size="lg" variant="outline" className="gap-2">
+                <Info className="h-4 w-4" />
+                {t('public.about')}
+              </Button>
+            </Link>
+            <Link to="/membership">
+              <Button size="lg" variant="outline" className="gap-2">
+                <BookOpen className="h-4 w-4" />
+                {t('public.membership')}
               </Button>
             </Link>
           </div>
@@ -143,40 +150,35 @@ export function PublicHomePage() {
       </section>
 
       {/* Stats */}
-      <section className="py-12">
+      <section className="py-12 bg-muted/20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-center text-xl font-semibold text-muted-foreground mb-8">
             {t('public.statsTitle')}
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            <Card>
-              <CardContent className="pt-6 text-center">
-                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                  <Users className="h-6 w-6 text-primary" />
-                </div>
-                <p className="text-3xl font-bold"><AnimatedNumber value={stats?.members ?? 0} /></p>
-                <p className="text-sm text-muted-foreground mt-1">{t('public.totalMembers')}</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-6 text-center">
-                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                  <Home className="h-6 w-6 text-primary" />
-                </div>
-                <p className="text-3xl font-bold"><AnimatedNumber value={stats?.families ?? 0} /></p>
-                <p className="text-sm text-muted-foreground mt-1">{t('public.totalFamilies')}</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-6 text-center">
-                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                  <Heart className="h-6 w-6 text-primary" />
-                </div>
-                <p className="text-3xl font-bold"><AnimatedNumber value={stats?.cases ?? 0} /></p>
-                <p className="text-sm text-muted-foreground mt-1">{t('public.casesHandled')}</p>
-              </CardContent>
-            </Card>
-          </div>
+          {statsLoading ? (
+            <PublicStatsSkeleton count={3} />
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              {[
+                { icon: Users, value: stats?.members ?? 0, label: t('public.totalMembers'), color: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-50 dark:bg-blue-950/40' },
+                { icon: Home, value: stats?.families ?? 0, label: t('public.totalFamilies'), color: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-50 dark:bg-emerald-950/40' },
+                { icon: Heart, value: stats?.cases ?? 0, label: t('public.casesHandled'), color: 'text-rose-600 dark:text-rose-400', bg: 'bg-rose-50 dark:bg-rose-950/40' },
+              ].map(({ icon: Icon, value, label, color, bg }) => (
+                <Card key={label} className="overflow-hidden border-0 shadow-sm">
+                  <div className="h-1 bg-gradient-to-r from-primary to-primary/40" />
+                  <CardContent className="pt-6 pb-6 text-center">
+                    <div className={`mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl ${bg}`}>
+                      <Icon className={`h-7 w-7 ${color}`} />
+                    </div>
+                    <p className={`text-4xl font-bold ${color}`}>
+                      <AnimatedNumber value={value} />
+                    </p>
+                    <p className="text-sm font-medium text-muted-foreground mt-2">{label}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -191,7 +193,9 @@ export function PublicHomePage() {
               </Button>
             </Link>
           </div>
-          {announcements && announcements.length > 0 ? (
+          {announcementsLoading ? (
+            <PublicMiniCardSkeleton count={3} />
+          ) : announcements && announcements.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {announcements.map((a) => (
                 <ExpandableAnnouncementCard
@@ -219,7 +223,9 @@ export function PublicHomePage() {
               </Button>
             </Link>
           </div>
-          {funeralCases && funeralCases.length > 0 ? (
+          {casesLoading ? (
+            <PublicMiniCardSkeleton count={3} />
+          ) : funeralCases && funeralCases.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {funeralCases.map((fc) => (
                 <Card key={fc.id}>
@@ -248,6 +254,34 @@ export function PublicHomePage() {
           ) : (
             <p className="text-center text-muted-foreground py-8">{t('public.noFuneralCases')}</p>
           )}
+        </div>
+      </section>
+
+      {/* Explore Section */}
+      <section className="py-12 bg-muted/30">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <h2 className="text-xl font-bold text-center mb-8">{t('public.exploreTitle')}</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+            {[
+              { to: '/about', icon: Info, labelKey: 'public.about' },
+              { to: '/membership', icon: BookOpen, labelKey: 'public.membership' },
+              { to: '/announcements', icon: Megaphone, labelKey: 'public.announcements' },
+              { to: '/contact', icon: Phone, labelKey: 'public.contact' },
+              { to: '/donate', icon: Heart, labelKey: 'public.donate' },
+              { to: '/faq', icon: Users, labelKey: 'public.faq' },
+            ].map(({ to, icon: Icon, labelKey }) => (
+              <Link key={to} to={to}>
+                <Card className="hover:border-primary/50 hover:bg-primary/5 transition-colors cursor-pointer h-full">
+                  <CardContent className="pt-5 pb-5 flex flex-col items-center gap-2 text-center">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                      <Icon className="h-5 w-5 text-primary" />
+                    </div>
+                    <p className="text-xs font-medium">{t(labelKey)}</p>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
     </div>
