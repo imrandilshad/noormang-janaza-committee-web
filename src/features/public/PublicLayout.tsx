@@ -192,14 +192,18 @@ export function PublicLayout() {
           <div className="flex h-16 items-center justify-between gap-2">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2.5 shrink-0 min-w-0">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
-                <Heart className="h-4 w-4" />
-              </div>
+              <img
+                src="/logo.png"
+                alt="Noormang Mutual Committee"
+                className="h-14 w-14 shrink-0 rounded-xl object-cover shadow-sm"
+              />
               <div className="hidden sm:block">
                 <p className="text-sm font-bold leading-none tracking-tight whitespace-nowrap">
                   Noormang Mutual
                 </p>
-                <p className="text-xs text-muted-foreground mt-0.5">Committee</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Committee
+                </p>
               </div>
             </Link>
 
@@ -309,8 +313,12 @@ export function PublicLayout() {
             {/* Brand */}
             <div className="sm:col-span-2 xl:col-span-1 space-y-4">
               <div className="flex items-center gap-2.5">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
-                  <Heart className="h-5 w-5" />
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl text-primary-foreground shadow-sm">
+                  <img
+                    src="/logo.png"
+                    alt="Janaza Committee"
+                    className="h-14 w-14 mx-auto rounded-2xl object-cover shadow-md"
+                  />
                 </div>
                 <div>
                   <p className="font-bold leading-tight">Noormang Mutual</p>

@@ -4,7 +4,6 @@ import {
   LayoutDashboard,
   Users,
   Home,
-  Heart,
   BookOpen,
   Receipt,
   HandCoins,
@@ -67,9 +66,11 @@ export function Sidebar() {
         {/* Logo */}
         <div className="flex items-center justify-between px-4 py-4">
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              <Heart className="h-4 w-4" />
-            </div>
+            <img
+              src="/logo.png"
+              alt="Janaza Committee"
+              className="h-16 w-16 rounded-lg object-cover"
+            />
             <div>
               <p className="text-sm font-bold leading-none">Janaza Committee</p>
               <p className="text-xs text-muted-foreground">Village Noormang</p>
