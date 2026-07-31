@@ -116,7 +116,7 @@
     "addExpense": "Add Expense",
     "editExpense": "Edit Expense",
     "expenseList": "Expenses",
-    "searchPlaceholder": "Search by case number or description…"
+    "searchPlaceholder": "Search by name or case number"
   },
   "collection": {
     "amountDue": "Amount Due",

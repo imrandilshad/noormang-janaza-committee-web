@@ -48,7 +48,7 @@ export function Header() {
         <LanguageToggle />
         <ThemeToggle />
 
-        <DropdownMenu>
+        <DropdownMenu modal={false}>
           <DropdownMenuPrimitive.Trigger asChild>
             <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full p-0 focus-visible:ring-2 focus-visible:ring-ring">
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold select-none">

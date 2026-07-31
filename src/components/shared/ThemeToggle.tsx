@@ -21,7 +21,7 @@ export function ThemeToggle() {
         : t('settings.systemMode')
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" title={themeLabel}>
           {theme === 'dark' ? (

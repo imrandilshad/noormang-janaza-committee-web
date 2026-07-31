@@ -41,10 +41,10 @@ export function PaymentsPage() {
     queryFn: async () => {
       const { data } = await supabase
         .from('payments')
-        .select('*, collections(amount_due, members(full_name), funeral_cases(case_number))')
+        .select('*, collections(amount_due, members(full_name), funeral_cases(case_number, deceased_name))')
         .order('payment_date', { ascending: false })
       return (data ?? []) as (Payment & {
-        collections: { amount_due: number; members: { full_name: string }; funeral_cases: { case_number: string } }
+        collections: { amount_due: number; members: { full_name: string }; funeral_cases: { case_number: string; deceased_name: string } }
       })[]
     },
   })
@@ -54,14 +54,14 @@ export function PaymentsPage() {
     queryFn: async () => {
       const { data } = await supabase
         .from('collections')
-        .select('id, amount_due, amount_paid, members(full_name), funeral_cases(case_number)')
+        .select('id, amount_due, amount_paid, members(full_name), funeral_cases(case_number, deceased_name)')
         .neq('status', 'paid')
       return (data ?? []) as unknown as {
         id: string
         amount_due: number
         amount_paid: number
         members: { full_name: string } | null
-        funeral_cases: { case_number: string } | null
+        funeral_cases: { case_number: string; deceased_name: string } | null
       }[]
     },
   })
@@ -126,7 +126,14 @@ export function PaymentsPage() {
                 ) : (
                   payments.map((p) => (
                     <TableRow key={p.id}>
-                      <TableCell className="font-mono text-sm">{p.collections?.funeral_cases?.case_number}</TableCell>
+                      <TableCell className="font-mono text-sm">
+                        <div>
+                          <span>{p.collections?.funeral_cases?.case_number}</span>
+                          {p.collections?.funeral_cases?.deceased_name && (
+                            <p className="text-xs text-muted-foreground font-sans font-normal">{p.collections.funeral_cases.deceased_name}</p>
+                          )}
+                        </div>
+                      </TableCell>
                       <TableCell>{p.collections?.members?.full_name}</TableCell>
                       <TableCell className="font-semibold text-green-600">{formatCurrency(p.amount)}</TableCell>
                       <TableCell>{formatDate(p.payment_date)}</TableCell>
@@ -157,7 +164,7 @@ export function PaymentsPage() {
                 <SelectContent>
                   {pendingCollections.map((c) => (
                     <SelectItem key={c.id} value={c.id}>
-                      {c.funeral_cases?.case_number} – {c.members?.full_name} (Due: {formatCurrency(c.amount_due - c.amount_paid)})
+                      {c.funeral_cases?.case_number}{c.funeral_cases?.deceased_name ? ` – ${c.funeral_cases.deceased_name}` : ''} – {c.members?.full_name} (Due: {formatCurrency(c.amount_due - c.amount_paid)})
                     </SelectItem>
                   ))}
                 </SelectContent>

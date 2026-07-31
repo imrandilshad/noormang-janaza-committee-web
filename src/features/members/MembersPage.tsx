@@ -162,6 +162,7 @@ export function MembersPage() {
                   <TableHead>{t('member.memberId')}</TableHead>
                   <TableHead>{t('member.fullName')}</TableHead>
                   <TableHead>{t('member.fatherName')}</TableHead>
+                  <TableHead>Family</TableHead>
                   <TableHead>{t('member.phone')}</TableHead>
                   <TableHead>{t('member.status')}</TableHead>
                   <TableHead className="text-right">{t('common.actions')}</TableHead>
@@ -170,7 +171,7 @@ export function MembersPage() {
               <TableBody>
                 {filtered.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center text-muted-foreground">
+                    <TableCell colSpan={7} className="text-center text-muted-foreground">
                       {t('common.noData')}
                     </TableCell>
                   </TableRow>
@@ -180,6 +181,7 @@ export function MembersPage() {
                       <TableCell className="font-mono">{member.member_number}</TableCell>
                       <TableCell className="font-medium">{member.full_name}</TableCell>
                       <TableCell className="text-muted-foreground">{member.father_name}</TableCell>
+                      <TableCell className="text-muted-foreground">{(member as typeof member & { families: { family_name: string } | null }).families?.family_name ?? '—'}</TableCell>
                       <TableCell>{member.phone}</TableCell>
                       <TableCell>
                         <Badge variant={statusVariant[member.status]}>

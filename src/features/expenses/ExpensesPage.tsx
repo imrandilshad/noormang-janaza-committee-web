@@ -226,16 +226,17 @@ export function ExpensesPage() {
                   filtered.map((e) => (
                     <TableRow key={e.id}>
                       <TableCell className="font-mono text-sm">
-                        {
-                          (
-                            e as typeof e & {
-                              funeral_cases: {
-                                case_number: string;
-                                deceased_name: string;
-                              };
-                            }
-                          ).funeral_cases?.case_number
-                        }
+                        {(() => {
+                          const fc = (e as typeof e & { funeral_cases: { case_number: string; deceased_name: string } }).funeral_cases
+                          return (
+                            <div>
+                              <span>{fc?.case_number}</span>
+                              {fc?.deceased_name && (
+                                <p className="text-xs text-muted-foreground font-sans font-normal">{fc.deceased_name}</p>
+                              )}
+                            </div>
+                          )
+                        })()}
                       </TableCell>
                       <TableCell>
                         <Badge
