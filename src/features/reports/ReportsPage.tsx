@@ -9,11 +9,19 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { supabase } from '@/lib/supabase'
 import { TableSkeleton, ReportsSkeleton } from '@/components/shared/Skeletons'
 import { formatCurrency, formatDate } from '@/lib/utils'
+import { useAppStore } from '@/store/useAppStore'
 
 const COLORS = ['#3b82f6', '#ef4444', '#f59e0b', '#10b981']
 
 export function ReportsPage() {
   const { t } = useTranslation()
+  const { theme } = useAppStore()
+  const isDark = theme === 'dark' || (theme === 'system' && typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches)
+  const axisColor = isDark ? '#9ca3af' : '#6b7280'
+  const gridColor = isDark ? '#374151' : '#e5e7eb'
+  const tooltipBg = isDark ? '#1f2937' : '#ffffff'
+  const tooltipBorder = isDark ? '#374151' : '#e5e7eb'
+  const tooltipTextColor = isDark ? '#f9fafb' : '#111827'
   const [from, setFrom] = useState(new Date(new Date().getFullYear(), 0, 1).toISOString().split('T')[0])
   const [to, setTo] = useState(new Date().toISOString().split('T')[0])
 
@@ -112,10 +120,14 @@ export function ReportsPage() {
                 >
                   {byCategory.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
                 </Pie>
-                <Tooltip formatter={(v) => formatCurrency(Number(v))} />
+                <Tooltip
+                  formatter={(v) => formatCurrency(Number(v))}
+                  contentStyle={{ backgroundColor: tooltipBg, border: `1px solid ${tooltipBorder}`, color: tooltipTextColor, borderRadius: '6px' }}
+                  itemStyle={{ color: tooltipTextColor }}
+                />
                 <Legend
                   formatter={(value, entry) => (
-                    <span className="text-xs">{value}: {formatCurrency((entry.payload as { value: number }).value)}</span>
+                    <span style={{ color: axisColor }} className="text-xs">{value}: {formatCurrency((entry.payload as { value: number }).value)}</span>
                   )}
                 />
               </PieChart>
@@ -133,10 +145,15 @@ export function ReportsPage() {
                 { name: 'Paid', amount: totalCollected },
                 { name: 'Outstanding', amount: collectionData.reduce((s, c) => s + c.amount_due - c.amount_paid, 0) },
               ]}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis tickFormatter={(v) => `Rs ${(v / 1000).toFixed(0)}k`} />
-                <Tooltip formatter={(v) => formatCurrency(Number(v))} />
+                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+                <XAxis dataKey="name" tick={{ fill: axisColor }} axisLine={{ stroke: gridColor }} tickLine={{ stroke: gridColor }} />
+                <YAxis tickFormatter={(v) => `Rs ${(v / 1000).toFixed(0)}k`} tick={{ fill: axisColor }} axisLine={{ stroke: gridColor }} tickLine={{ stroke: gridColor }} />
+                <Tooltip
+                  formatter={(v) => formatCurrency(Number(v))}
+                  contentStyle={{ backgroundColor: tooltipBg, border: `1px solid ${tooltipBorder}`, color: tooltipTextColor, borderRadius: '6px' }}
+                  itemStyle={{ color: tooltipTextColor }}
+                  cursor={{ fill: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }}
+                />
                 <Bar dataKey="amount" fill="#3b82f6" radius={4} />
               </BarChart>
             </ResponsiveContainer>

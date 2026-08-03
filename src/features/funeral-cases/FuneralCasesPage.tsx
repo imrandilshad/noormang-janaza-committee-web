@@ -22,8 +22,8 @@ import { formatDate, formatCurrency } from '@/lib/utils'
 import type { FuneralCase } from '@/types/database'
 
 const caseSchema = z.object({
-  deceased_name: z.string().min(1),
-  date_of_death: z.string().min(1),
+  deceased_name: z.string().min(1, "Deceased name is required"),
+  date_of_death: z.string().min(1, "Date of death is required"),
   date_of_funeral: z.string().optional(),
   location: z.string().optional(),
   contact_person: z.string().optional(),
@@ -199,12 +199,12 @@ export function FuneralCasesPage() {
       </Card>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto w-[calc(100vw-2rem)] sm:w-full">
           <DialogHeader>
             <DialogTitle>{editing ? t('funeral.editCase') : t('funeral.addCase')}</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit((v) => upsert.mutate(v))} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {editing && (
                 <div className="space-y-2">
                   <Label>{t('funeral.caseNumber')}</Label>
@@ -221,13 +221,13 @@ export function FuneralCasesPage() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2 col-span-2">
-                <Label>{t('funeral.deceasedName')} *</Label>
+              <div className="space-y-2 sm:col-span-2">
+                <Label>{t('funeral.deceasedName')} <span className="text-destructive">*</span></Label>
                 <Input {...register('deceased_name')} />
                 {errors.deceased_name && <p className="text-xs text-destructive">{errors.deceased_name.message}</p>}
               </div>
               <div className="space-y-2">
-                <Label>{t('funeral.dateOfDeath')} *</Label>
+                <Label>{t('funeral.dateOfDeath')} <span className="text-destructive">*</span></Label>
                 <Input {...register('date_of_death')} type="date" />
               </div>
               <div className="space-y-2">
@@ -246,12 +246,12 @@ export function FuneralCasesPage() {
                 <Label>{t('funeral.contactPhone')}</Label>
                 <Input {...register('contact_phone')} type="tel" />
               </div>
-              <div className="space-y-2 col-span-2">
+              <div className="space-y-2 sm:col-span-2">
                 <Label>{t('funeral.notes')}</Label>
                 <Textarea {...register('notes')} rows={3} />
               </div>
             </div>
-            <DialogFooter>
+            <DialogFooter className="gap-2">
               <Button type="button" variant="outline" onClick={() => setOpen(false)}>{t('common.cancel')}</Button>
               <Button type="submit" disabled={isSubmitting || upsert.isPending}>
                 {editing ? t('common.update') : t('common.save')}

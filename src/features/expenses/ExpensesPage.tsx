@@ -44,6 +44,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Combobox } from "@/components/ui/combobox";
 import { supabase } from "@/lib/supabase";
 import { TableSkeleton } from "@/components/shared/Skeletons";
 import { SearchInput } from "@/components/shared/SearchInput";
@@ -51,11 +52,15 @@ import { formatDate, formatCurrency } from "@/lib/utils";
 import type { Expense } from "@/types/database";
 
 const expenseSchema = z.object({
-  funeral_case_id: z.string().min(1),
+  funeral_case_id: z
+    .string({ message: "Please select a funeral case" })
+    .min(1, "Please select a funeral case"),
   category: z.enum(["transportation", "food", "shroud", "miscellaneous"]),
   description: z.string().optional(),
-  amount: z.number().positive(),
-  expense_date: z.string().min(1),
+  amount: z
+    .number({ message: "Please enter a valid amount" })
+    .positive("Amount must be greater than 0"),
+  expense_date: z.string().min(1, "Expense date is required"),
 });
 
 type ExpenseForm = z.infer<typeof expenseSchema>;
@@ -114,6 +119,7 @@ export function ExpensesPage() {
   } = useForm<ExpenseForm>({
     resolver: zodResolver(expenseSchema),
     defaultValues: {
+      funeral_case_id: "",
       category: "miscellaneous",
       expense_date: new Date().toISOString().split("T")[0],
     },
@@ -150,6 +156,7 @@ export function ExpensesPage() {
           onClick={() => {
             setEditing(null);
             reset({
+              funeral_case_id: "",
               category: "miscellaneous",
               expense_date: new Date().toISOString().split("T")[0],
             });
@@ -176,145 +183,183 @@ export function ExpensesPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">{t("common.allCategories")}</SelectItem>
-                <SelectItem value="transportation">{t("expense.transportation")}</SelectItem>
+                <SelectItem value="transportation">
+                  {t("expense.transportation")}
+                </SelectItem>
                 <SelectItem value="food">{t("expense.food")}</SelectItem>
                 <SelectItem value="shroud">{t("expense.shroud")}</SelectItem>
-                <SelectItem value="miscellaneous">{t("expense.miscellaneous")}</SelectItem>
+                <SelectItem value="miscellaneous">
+                  {t("expense.miscellaneous")}
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
           {isLoading ? (
             <TableSkeleton rows={5} cols={7} />
-          ) : (() => {
-            const filtered = expenses.filter((e) => {
-              const fc = (e as typeof e & { funeral_cases: { case_number: string; deceased_name: string } }).funeral_cases
-              const matchesSearch = !search || (
-                fc?.case_number?.includes(search) ||
-                fc?.deceased_name?.toLowerCase().includes(search.toLowerCase()) ||
-                e.description?.toLowerCase().includes(search.toLowerCase()) ||
-                t(`expense.${e.category}`).toLowerCase().includes(search.toLowerCase())
-              )
-              const matchesCategory = categoryFilter === "all" || e.category === categoryFilter
-              return matchesSearch && matchesCategory
-            })
-            return (
-            <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Case</TableHead>
-                  <TableHead>{t("expense.category")}</TableHead>
-                  <TableHead>{t("expense.description")}</TableHead>
-                  <TableHead>{t("expense.amount")}</TableHead>
-                  <TableHead>{t("expense.expenseDate")}</TableHead>
-                  <TableHead className="text-right">
-                    {t("common.actions")}
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filtered.length === 0 ? (
-                  <TableRow>
-                    <TableCell
-                      colSpan={6}
-                      className="text-center text-muted-foreground"
-                    >
-                      {t("common.noData")}
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  filtered.map((e) => (
-                    <TableRow key={e.id}>
-                      <TableCell className="font-mono text-sm">
-                        {(() => {
-                          const fc = (e as typeof e & { funeral_cases: { case_number: string; deceased_name: string } }).funeral_cases
-                          return (
-                            <div>
-                              <span>{fc?.case_number}</span>
-                              {fc?.deceased_name && (
-                                <p className="text-xs text-muted-foreground font-sans font-normal">{fc.deceased_name}</p>
-                              )}
-                            </div>
-                          )
-                        })()}
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={
-                            categoryVariant[e.category] as
-                              | "default"
-                              | "secondary"
-                              | "outline"
-                          }
-                        >
-                          {t(`expense.${e.category}`)}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-muted-foreground">
-                        {e.description}
-                      </TableCell>
-                      <TableCell className="font-semibold">
-                        {formatCurrency(e.amount)}
-                      </TableCell>
-                      <TableCell>{formatDate(e.expense_date)}</TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-1">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8"
-                            onClick={() => {
-                              setEditing(e);
-                              reset({
-                                funeral_case_id: e.funeral_case_id,
-                                category: e.category,
-                                description: e.description ?? "",
-                                amount: e.amount,
-                                expense_date: e.expense_date,
-                              });
-                              setOpen(true);
-                            }}
+          ) : (
+            (() => {
+              const filtered = expenses.filter((e) => {
+                const fc = (
+                  e as typeof e & {
+                    funeral_cases: {
+                      case_number: string;
+                      deceased_name: string;
+                    };
+                  }
+                ).funeral_cases;
+                const matchesSearch =
+                  !search ||
+                  fc?.case_number?.includes(search) ||
+                  fc?.deceased_name
+                    ?.toLowerCase()
+                    .includes(search.toLowerCase()) ||
+                  e.description?.toLowerCase().includes(search.toLowerCase()) ||
+                  t(`expense.${e.category}`)
+                    .toLowerCase()
+                    .includes(search.toLowerCase());
+                const matchesCategory =
+                  categoryFilter === "all" || e.category === categoryFilter;
+                return matchesSearch && matchesCategory;
+              });
+              return (
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Case</TableHead>
+                        <TableHead>{t("expense.category")}</TableHead>
+                        <TableHead>{t("expense.description")}</TableHead>
+                        <TableHead>{t("expense.amount")}</TableHead>
+                        <TableHead>{t("expense.expenseDate")}</TableHead>
+                        <TableHead className="text-right">
+                          {t("common.actions")}
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filtered.length === 0 ? (
+                        <TableRow>
+                          <TableCell
+                            colSpan={6}
+                            className="text-center text-muted-foreground"
                           >
-                            <Pencil className="h-3.5 w-3.5" />
-                          </Button>
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                            {t("common.noData")}
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        filtered.map((e) => (
+                          <TableRow key={e.id}>
+                            <TableCell className="font-mono text-sm">
+                              {(() => {
+                                const fc = (
+                                  e as typeof e & {
+                                    funeral_cases: {
+                                      case_number: string;
+                                      deceased_name: string;
+                                    };
+                                  }
+                                ).funeral_cases;
+                                return (
+                                  <div>
+                                    <span>{fc?.case_number}</span>
+                                    {fc?.deceased_name && (
+                                      <p className="text-xs text-muted-foreground font-sans font-normal">
+                                        {fc.deceased_name}
+                                      </p>
+                                    )}
+                                  </div>
+                                );
+                              })()}
+                            </TableCell>
+                            <TableCell>
+                              <Badge
+                                variant={
+                                  categoryVariant[e.category] as
+                                    | "default"
+                                    | "secondary"
+                                    | "outline"
+                                }
                               >
-                                <Trash2 className="h-3.5 w-3.5" />
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>Delete Expense</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Delete this expense record? This cannot be undone.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
-                                <AlertDialogAction onClick={() => deleteMutation.mutate(e.id)}>{t("common.delete")}</AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-            </div>
-            )
-          })()}
+                                {t(`expense.${e.category}`)}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-muted-foreground">
+                              {e.description}
+                            </TableCell>
+                            <TableCell className="font-semibold">
+                              {formatCurrency(e.amount)}
+                            </TableCell>
+                            <TableCell>{formatDate(e.expense_date)}</TableCell>
+                            <TableCell className="text-right">
+                              <div className="flex justify-end gap-1">
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8"
+                                  onClick={() => {
+                                    setEditing(e);
+                                    reset({
+                                      funeral_case_id: e.funeral_case_id,
+                                      category: e.category,
+                                      description: e.description ?? "",
+                                      amount: e.amount,
+                                      expense_date: e.expense_date,
+                                    });
+                                    setOpen(true);
+                                  }}
+                                >
+                                  <Pencil className="h-3.5 w-3.5" />
+                                </Button>
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                                    >
+                                      <Trash2 className="h-3.5 w-3.5" />
+                                    </Button>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>
+                                        Delete Expense
+                                      </AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        Delete this expense record? This cannot
+                                        be undone.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>
+                                        {t("common.cancel")}
+                                      </AlertDialogCancel>
+                                      <AlertDialogAction
+                                        onClick={() =>
+                                          deleteMutation.mutate(e.id)
+                                        }
+                                      >
+                                        {t("common.delete")}
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              );
+            })()
+          )}
         </CardContent>
       </Card>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
+        <DialogContent className="w-[calc(100vw-2rem)] sm:w-full max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
               {editing ? t("expense.editExpense") : t("expense.addExpense")}
@@ -325,29 +370,29 @@ export function ExpensesPage() {
             className="space-y-4"
           >
             <div className="space-y-2">
-              <Label>Funeral Case *</Label>
-              <Select
+              <Label>
+                Funeral Case <span className="text-destructive">*</span>
+              </Label>
+              <Combobox
+                options={funeralCases.map((c) => ({
+                  value: c.id,
+                  label: `${c.case_number} \u2013 ${c.deceased_name}`,
+                }))}
                 value={watch("funeral_case_id") ?? ""}
-                onValueChange={(v) => setValue("funeral_case_id", v)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select case" />
-                </SelectTrigger>
-                <SelectContent>
-                  {funeralCases.map((c) => (
-                    <SelectItem key={c.id} value={c.id}>
-                      {c.case_number} – {c.deceased_name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                onValueChange={(v) =>
+                  setValue("funeral_case_id", v, { shouldValidate: true })
+                }
+                placeholder="Select case"
+                searchPlaceholder="Search by case number or deceased name"
+                emptyText="No open cases found"
+              />
               {errors.funeral_case_id && (
                 <p className="text-xs text-destructive">
                   {errors.funeral_case_id.message}
                 </p>
               )}
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>{t("expense.category")}</Label>
                 <Select
@@ -374,7 +419,10 @@ export function ExpensesPage() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>{t("expense.amount")} *</Label>
+                <Label>
+                  {t("expense.amount")}{" "}
+                  <span className="text-destructive">*</span>
+                </Label>
                 <Input
                   {...register("amount", { valueAsNumber: true })}
                   type="number"
@@ -387,15 +435,18 @@ export function ExpensesPage() {
                 )}
               </div>
               <div className="space-y-2">
-                <Label>{t("expense.expenseDate")}</Label>
+                <Label>
+                  {t("expense.expenseDate")}{" "}
+                  <span className="text-destructive">*</span>
+                </Label>
                 <Input {...register("expense_date")} type="date" />
               </div>
-              <div className="space-y-2 col-span-2">
+              <div className="space-y-2 sm:col-span-2">
                 <Label>{t("expense.description")}</Label>
                 <Textarea {...register("description")} rows={2} />
               </div>
             </div>
-            <DialogFooter>
+            <DialogFooter className="gap-2">
               <Button
                 type="button"
                 variant="outline"

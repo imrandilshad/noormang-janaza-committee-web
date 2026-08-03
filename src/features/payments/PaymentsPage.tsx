@@ -14,15 +14,16 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Combobox } from '@/components/ui/combobox'
 import { supabase } from '@/lib/supabase'
 import { TableSkeleton } from '@/components/shared/Skeletons'
 import { formatDate, formatCurrency } from '@/lib/utils'
 import type { Payment } from '@/types/database'
 
 const paymentSchema = z.object({
-  collection_id: z.string().min(1),
-  amount: z.number().positive(),
-  payment_date: z.string().min(1),
+  collection_id: z.string({ message: "Please select a collection" }).min(1, "Please select a collection"),
+  amount: z.number({ message: "Please enter a valid amount" }).positive("Amount must be greater than 0"),
+  payment_date: z.string().min(1, "Payment date is required"),
   payment_method: z.enum(['cash', 'easypaisa', 'jazzcash', 'bank_transfer']),
   reference_number: z.string().optional(),
   notes: z.string().optional(),
@@ -68,7 +69,7 @@ export function PaymentsPage() {
 
   const { register, handleSubmit, reset, setValue, watch, formState: { errors, isSubmitting } } = useForm<PaymentForm>({
     resolver: zodResolver(paymentSchema),
-    defaultValues: { payment_method: 'cash', payment_date: new Date().toISOString().split('T')[0] },
+    defaultValues: { collection_id: '', payment_method: 'cash', payment_date: new Date().toISOString().split('T')[0] },
   })
 
   const create = useMutation({
@@ -93,12 +94,15 @@ export function PaymentsPage() {
 
   return (
     <div className="space-y-4 pb-4">
-      <div className="sticky top-0 z-20 bg-background pt-3 pb-2 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">{t('payment.paymentHistory')}</h1>
-        <Button onClick={() => { reset({ payment_method: 'cash', payment_date: new Date().toISOString().split('T')[0] }); setOpen(true) }}>
-          <Plus className="mr-2 h-4 w-4" />
-          {t('payment.recordPayment')}
-        </Button>
+      <div className="sticky top-0 z-20 bg-background pt-3 pb-2">
+        <div className="flex items-start justify-between gap-2">
+          <h1 className="text-xl sm:text-2xl font-bold leading-tight">{t('payment.paymentHistory')}</h1>
+          <Button size="sm" className="shrink-0" onClick={() => { reset({ collection_id: '', payment_method: 'cash', payment_date: new Date().toISOString().split('T')[0] }); setOpen(true) }}>
+            <Plus className="mr-1.5 h-4 w-4" />
+            <span className="hidden sm:inline">{t('payment.recordPayment')}</span>
+            <span className="sm:hidden">Record</span>
+          </Button>
+        </div>
       </div>
 
       <Card>
@@ -154,31 +158,32 @@ export function PaymentsPage() {
       </Card>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
+        <DialogContent className="w-[calc(100vw-2rem)] sm:w-full max-h-[90vh] overflow-y-auto">
           <DialogHeader><DialogTitle>{t('payment.recordPayment')}</DialogTitle></DialogHeader>
           <form onSubmit={handleSubmit((v) => create.mutate(v))} className="space-y-4">
             <div className="space-y-2">
-              <Label>Collection *</Label>
-              <Select value={watch('collection_id') ?? ''} onValueChange={(v) => setValue('collection_id', v)}>
-                <SelectTrigger><SelectValue placeholder="Select member/case" /></SelectTrigger>
-                <SelectContent>
-                  {pendingCollections.map((c) => (
-                    <SelectItem key={c.id} value={c.id}>
-                      {c.funeral_cases?.case_number}{c.funeral_cases?.deceased_name ? ` – ${c.funeral_cases.deceased_name}` : ''} – {c.members?.full_name} (Due: {formatCurrency(c.amount_due - c.amount_paid)})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Label>Collection <span className="text-destructive">*</span></Label>
+              <Combobox
+                options={pendingCollections.map((c) => ({
+                  value: c.id,
+                  label: `${c.funeral_cases?.case_number ?? ''}${c.funeral_cases?.deceased_name ? ` \u2013 ${c.funeral_cases.deceased_name}` : ''} \u2013 ${c.members?.full_name ?? ''} (Due: ${formatCurrency(c.amount_due - c.amount_paid)})`,
+                }))}
+                value={watch('collection_id') ?? ''}
+                onValueChange={(v) => setValue('collection_id', v, { shouldValidate: true })}
+                placeholder="Select member/case"
+                searchPlaceholder="Search by case, member name…"
+                emptyText="No pending collections found"
+              />
               {errors.collection_id && <p className="text-xs text-destructive">{errors.collection_id.message}</p>}
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>{t('payment.amountPaid')} *</Label>
+                <Label>{t('payment.amountPaid')} <span className="text-destructive">*</span></Label>
                 <Input {...register('amount', { valueAsNumber: true })} type="number" min="0" />
                 {errors.amount && <p className="text-xs text-destructive">{errors.amount.message}</p>}
               </div>
               <div className="space-y-2">
-                <Label>{t('payment.paymentDate')}</Label>
+                <Label>{t('payment.paymentDate')} <span className="text-destructive">*</span></Label>
                 <Input {...register('payment_date')} type="date" />
               </div>
               <div className="space-y-2">
@@ -197,12 +202,12 @@ export function PaymentsPage() {
                 <Label>{t('payment.referenceNumber')}</Label>
                 <Input {...register('reference_number')} />
               </div>
-              <div className="space-y-2 col-span-2">
+              <div className="space-y-2 sm:col-span-2">
                 <Label>{t('payment.notes')}</Label>
                 <Textarea {...register('notes')} rows={2} />
               </div>
             </div>
-            <DialogFooter>
+            <DialogFooter className="gap-2">
               <Button type="button" variant="outline" onClick={() => setOpen(false)}>{t('common.cancel')}</Button>
               <Button type="submit" disabled={isSubmitting || create.isPending}>{t('common.save')}</Button>
             </DialogFooter>
