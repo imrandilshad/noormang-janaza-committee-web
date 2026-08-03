@@ -166,15 +166,59 @@ export function PaymentsPage() {
               <Combobox
                 options={pendingCollections.map((c) => ({
                   value: c.id,
-                  label: `${c.funeral_cases?.case_number ?? ''}${c.funeral_cases?.deceased_name ? ` \u2013 ${c.funeral_cases.deceased_name}` : ''} \u2013 ${c.members?.full_name ?? ''} (Due: ${formatCurrency(c.amount_due - c.amount_paid)})`,
+                  label: `${c.funeral_cases?.case_number ?? ''} – ${c.members?.full_name ?? ''}`,
                 }))}
                 value={watch('collection_id') ?? ''}
-                onValueChange={(v) => setValue('collection_id', v, { shouldValidate: true })}
+                onValueChange={(v) => {
+                  setValue('collection_id', v, { shouldValidate: true })
+                  const col = pendingCollections.find((c) => c.id === v)
+                  if (col) {
+                    const balance = Math.round(col.amount_due) - Math.round(col.amount_paid)
+                    if (balance > 0) setValue('amount', balance)
+                  }
+                }}
                 placeholder="Select member/case"
                 searchPlaceholder="Search by case, member name…"
                 emptyText="No pending collections found"
               />
               {errors.collection_id && <p className="text-xs text-destructive">{errors.collection_id.message}</p>}
+
+              {/* Collection detail panel */}
+              {watch('collection_id') && (() => {
+                const col = pendingCollections.find((c) => c.id === watch('collection_id'))
+                if (!col) return null
+                const balance = Math.round(col.amount_due) - Math.round(col.amount_paid)
+                return (
+                  <div className="rounded-md border border-border bg-muted/40 px-3 py-2.5 text-sm space-y-1.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-muted-foreground shrink-0">Case</span>
+                      <span className="font-mono font-medium text-right">{col.funeral_cases?.case_number}</span>
+                    </div>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-muted-foreground shrink-0">Deceased</span>
+                      <span className="font-medium text-right">{col.funeral_cases?.deceased_name}</span>
+                    </div>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-muted-foreground shrink-0">Member</span>
+                      <span className="text-right">{col.members?.full_name}</span>
+                    </div>
+                    <div className="border-t border-border mt-1 pt-1.5 space-y-1.5">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-muted-foreground shrink-0">Total Due</span>
+                        <span className="text-right">{formatCurrency(col.amount_due)}</span>
+                      </div>
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-muted-foreground shrink-0">Already Paid</span>
+                        <span className="text-green-600 text-right">{formatCurrency(col.amount_paid)}</span>
+                      </div>
+                      <div className="flex items-center justify-between gap-2 font-semibold">
+                        <span className="shrink-0">Balance</span>
+                        <span className="text-destructive text-right">{formatCurrency(balance)}</span>
+                      </div>
+                    </div>
+                  </div>
+                )
+              })()}
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">

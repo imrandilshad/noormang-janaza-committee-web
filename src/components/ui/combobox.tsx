@@ -55,11 +55,11 @@ export function Combobox({
           role="combobox"
           aria-expanded={open}
           className={cn(
-            "flex w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+            "flex w-full max-w-full items-center justify-between overflow-hidden rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
             className,
           )}
         >
-          <span className={cn("min-w-0 truncate text-left", !selected && "text-muted-foreground")}>
+          <span className={cn("min-w-0 flex-1 truncate text-left", !selected && "text-muted-foreground")}>
             {selected ? selected.label : placeholder}
           </span>
           <span className="ml-2 flex shrink-0 items-center gap-1">
@@ -93,16 +93,19 @@ export function Combobox({
         <PopoverPrimitive.Content
           align="start"
           sideOffset={4}
-          style={{ width: "var(--radix-popover-trigger-width)", pointerEvents: "auto" }}
+          avoidCollisions
+          collisionPadding={8}
+          style={{
+            width: "var(--radix-popover-trigger-width)",
+            maxWidth: "min(var(--radix-popover-content-available-width, 100vw), calc(100vw - 1rem))",
+            pointerEvents: "auto",
+          }}
           onWheel={(e) => e.stopPropagation()}
           onTouchMove={(e) => e.stopPropagation()}
           onOpenAutoFocus={(e) => {
-            // Prevent Radix from stealing focus from the search input when
-            // the Popover is opened inside a Dialog (which manages its own
-            // focus trap). We focus the search input manually below.
             e.preventDefault()
           }}
-          className="z-[300] min-w-[8rem] rounded-md border bg-popover p-0 text-popover-foreground shadow-md outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2"
+          className="z-[300] box-border min-w-[8rem] overflow-hidden rounded-md border bg-popover p-0 text-popover-foreground shadow-md outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2"
         >
           {/* Search input inside the dropdown */}
           <div className="flex items-center border-b px-3">
@@ -121,9 +124,11 @@ export function Combobox({
             style={{
               maxHeight: "220px",
               overflowY: "auto",
+              overflowX: "hidden",
               overscrollBehavior: "contain",
               WebkitOverflowScrolling: "touch",
               pointerEvents: "auto",
+              width: "100%",
             }}
             className="py-1"
             onWheel={(e) => e.stopPropagation()}
@@ -139,7 +144,7 @@ export function Combobox({
                 <div
                   key={opt.value}
                   className={cn(
-                    "relative flex cursor-pointer select-none items-center px-3 py-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground",
+                    "relative flex w-full min-w-0 max-w-full cursor-pointer select-none items-center overflow-hidden px-3 py-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground",
                     value === opt.value && "bg-accent text-accent-foreground",
                   )}
                   onClick={() => {
@@ -154,7 +159,7 @@ export function Combobox({
                       value === opt.value ? "opacity-100" : "opacity-0",
                     )}
                   />
-                  <span className="truncate">{opt.label}</span>
+                  <span className="block min-w-0 flex-1 truncate">{opt.label}</span>
                 </div>
               ))
             )}
